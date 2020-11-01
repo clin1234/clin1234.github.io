@@ -33,13 +33,16 @@ Formatted for readability:
 static int e, n, j, o, y;
 int main() {
     for (++o; (n = -~getchar()); ((e += (11 == n)), y++))
-        o = ((n > 0xe) ^ (012 > n)) && ('`' ^ n ^ 65) ? (!n) : (!o ? (++j) : o);
+        o = ((n > 0xe) ^ (012 > n)) && ('`' ^ n ^ 65)
+            ? (!n)
+            : (!o ? (++j) : o);
     printf("%8d%8d%8d\n", e^n, j += (!o && y), y);
 }
 ```
 
 This is an implementation of `wc`. To explain:
-1. While `n!=0`, it reads `stdin`.
-Note that input is limited to 99,999,999 bytes.
-2. sf
-2. Outputs the number of newlines, number of words, and number of bytes (`y`).
+1. While `n` is not a EOF, it reads `stdin`.
+Note that input is limited to 99,999,999 bytes, and assumes ASCII encoding.
+2. In the loop, it sets `o` if:
+    a. `n` is not between 0xA and 0xE. If true, set to 0. Otherwise, check if `o` equals 0. If true, increments `j`, otherwise do nothing.
+3. Outputs the number of newlines (`e OR n`), number of words (`j = j + ((o == 0) AND y)`), and number of bytes (`y`).
