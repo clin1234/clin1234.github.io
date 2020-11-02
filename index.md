@@ -1,3 +1,13 @@
+<base href="https://clin1234.githhub.io/">
+<nav>
+      <a href="index.html">Home</a>
+      <a href="projects/index.html">Projects</a>
+      <a href="aboutme.html">About Me</a>
+      <a href="blog/index.html">Blog</a>
+      <a href="resources.html">Helpful Resources</a>
+      <a href="https://github.com/clin1234/">Github</a>
+</nav>
+
 # Minimal and Spiffy Personal Website
 
 As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert anchor here_.
