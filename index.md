@@ -15,7 +15,8 @@ As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert an
 ## Links (Pun is intentional.)
 
 * [Code for my website](https://github.com/clin1234/clin1234.github.io)
-* [zlite library](https://github.com/clin1234/zlite)
+* [zlite library](https://github.com/clin1234/zlite) Still in progress.
+* [copilot-clone](https://github.com/clin1234/copilot-clone) A VSCode extension for code suggestions, much like Github Copilot.
 * [NMS](https://github.com/clin1234/NMS) a proof of concept Minesweeper-like clone with multiplayer support. Still in progress.
 
 # Rollins-related stuff
