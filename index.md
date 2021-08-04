@@ -16,7 +16,7 @@ As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert an
 
 * [Code for my website](https://github.com/clin1234/clin1234.github.io)
 * [zlite library](https://github.com/clin1234/zlite) Still in progress.
-* [copilot-clone](https://github.com/clin1234/copilot-clone) A VSCode extension for code suggestions, much like Github Copilot.
+* [copilot-clone](https://github.com/clin1234/copilot-clone) A VSCode extension for code suggestions, much like Github Copilot. GH page is [here](https://clin1234.github.io/copilot-clone)
 * [NMS](https://github.com/clin1234/NMS) a proof of concept Minesweeper-like clone with multiplayer support. Still in progress.
 
 # Rollins-related stuff
