@@ -18,15 +18,21 @@
                 Github
             </a>
 </nav>
+
 # Resources
+
 ## HTML and Related
 
 * [HTML: the Living Standard](https://html.spec.whatwg.org/dev/)
 * [CSS 2](https://drafts.csswg.org/css2/)
 * [ECMASCript Specification](https://tc39.es/ecma262/)
 * [ECMAScript Internationalization API Specification](https://tc39.es/ecma402/)
+* [V8 Features](https://v8.dev/features)
+* [JS Engine Compatibility Table](https://kangax.github.io/compat-table/es6/) and [a table specifically for Node.js](https://node.green) 
 
 ## Interpreters
+
+* [Crafting Interpreers](https://craftinginterpreters.com/)
 
 ## Git
 
