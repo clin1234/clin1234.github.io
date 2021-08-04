@@ -1,4 +1,4 @@
-<base href="https://clin1234.githhub.io/">
+<base href="https://clin1234.github.io/">
 <nav>
       <a href="index.html">Home</a>
       <a href="projects/index.html">Projects</a>
