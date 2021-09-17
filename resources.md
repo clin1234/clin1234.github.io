@@ -34,6 +34,10 @@
 
 * [Crafting Interpreers](https://craftinginterpreters.com/)
 
+## Python
+
+* [Real Python](https://realpython.com/)
+
 ## Git
 
 * [Git Hooks](https://githooks.com/)
