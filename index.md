@@ -12,6 +12,12 @@
 
 As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert anchor here_.
 
+# Miscellaneous certifications
+
+Because of limited space to squeeze my resume into a single page, certifications that I deem secondary in terms of importance will be listed here.
+
+* [Image Porcessing with Python](https://www.datacamp.com/statement-of-accomplishment/track/0903c21f7f062f4de6ac39c080734596366bcadc)
+
 ## Links (Pun is intentional.)
 
 * [Code for my website](https://github.com/clin1234/clin1234.github.io)
@@ -23,7 +29,12 @@ As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert an
 
 As a member of the local ACM chapter, this serves as a repository for personal projects and pursuits otherwise "taxing" for the college's technical resources, in the views of the IT Department. **I vehemently disagree.**
 
-## ACM club
+Furthermore, in the age of COVID lockdowns and fear of infections, governmental influence and authority, at least in the Western world, has certainly waxed. This may not bide well with bdding liberty-minded intelligentia, at least what remains of it in the United States. Joining a certain student-run club has certain soured my perception of governmental competance in swiftly dealing with social crises on all levels. To quote the forefather of contemporary American conservatism:
+
+> “Truth is a demure lady, much too ladylike to knock you on your head and drag you to her cave. She is there, but people must want her, and seek her out.”
+― William F. Buckley Jr. 
+
+## ACM club (outdated)
 
 * [Slack page](https://acm2019-20.slack.com)
 * [ACM Discord Server](https://discord.com/channels/693677245394452522/693677245838917634)
