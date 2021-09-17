@@ -29,7 +29,7 @@ Because of limited space to squeeze my resume into a single page, certifications
 
 As a member of the local ACM chapter, this serves as a repository for personal projects and pursuits otherwise "taxing" for the college's technical resources, in the views of the IT Department. **I vehemently disagree.**
 
-Furthermore, in the age of COVID lockdowns and fear of infections, governmental influence and authority, at least in the Western world, has certainly waxed. This may not bide well with bdding liberty-minded intelligentia, at least what remains of it in the United States. Joining a certain student-run club has certain soured my perception of governmental competance in swiftly dealing with social crises on all levels. To quote the forefather of contemporary American conservatism:
+Furthermore, in the age of COVID lockdowns and fear of infections, governmental influence and authority, at least in the Western world, has certainly waxed. This may not bide well with budding liberty-minded intelligentia, at least what remains of it in the United States. Joining a certain student-run club has certain soured my perception of governmental competance in swiftly dealing with social crises on all levels. To quote the forefather of contemporary American conservatism:
 
 > “Truth is a demure lady, much too ladylike to knock you on your head and drag you to her cave. She is there, but people must want her, and seek her out.”
 ― William F. Buckley Jr. 
