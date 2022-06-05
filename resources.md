@@ -32,7 +32,14 @@
 
 ## Interpreters
 
-* [Crafting Interpreers](https://craftinginterpreters.com/)
+* [Crafting Interpreters](https://craftinginterpreters.com/)
+
+## GTK and related
+
+* [Glib](https://docs.gtk.org/glib/)
+    * [GObject](https://docs.gtk.org/gobject/) 
+    * [GIO](https://docs.gtk.org/gio/)
+* [GTK](https://docs.gtk.org/gtk4/)
 
 ## Python
 
@@ -42,6 +49,11 @@
 
 * [Git Hooks](https://githooks.com/)
 * [Official Git Docs](https://git-scm.com/doc)
+
+## .NET
+
+* [.NET Documentation Hub](https://docs.microsoft.com/en-us/dotnet/)
+* [T4](https://docs.microsoft.com/en-us/visualstudio/modeling/code-generation-and-t4-text-templates?view=vs-2022)
 
 ## Markdown
 
