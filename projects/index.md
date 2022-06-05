@@ -18,4 +18,4 @@ About high time I mentioned them:
 * [Captain Stack](https://github.com/clin1234/copilot-clone): extension for VSCode and compatibles (I use VSCodium for Captain Stack's development) that mimics GitHub's Copilot by aggregating StackOverflow answers for code completion. Typescript source is transpiled to JS.
 * [LibreOffice AppImages](https://github.com/clin1234/libreoffice-appimage): daily bleeding-edge builds of LibreOffice in AppImage format.
 * [Unoffical Discord client](https://github.com/clin1234/unofficial-discord-client): desktop-based Discord client written in C++, Qt, and QML.
-* [ILSpy]: a fork of ILSpy that bumps the .NET SDK version to 6.x, mainly for new C# features.
+* [ILSpy](https://github.com/clin1234/ILSpy): a fork of ILSpy that bumps the .NET SDK version to 6.x, mainly for new C# features.
