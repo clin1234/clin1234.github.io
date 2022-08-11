@@ -22,7 +22,7 @@ and current web browsers don't support it natively, at least on Linux.
 
 To sum up in one word: *Wonderous*. Not only did I relish in collaborating with a graduate student who have published numerous papers on the field of computer-enhanced vision, but also indulged in engaging with both the academic and social summer-time atmosphere found within the university, including gazing at the Central Library, shown below:
 
-## Would you have pursued this internship without external funding?
+## Would I have pursued this internship without external funding?
 
 Without the funding, I would have not pursued it, or any other internship not within
 driving distance from Central Florida. One major disincentive that the Gateway Fellows program
@@ -51,7 +51,7 @@ and the university, feel relieving compared to both the hotel's Wi-Fi and my "ul
 only her papers, but also those published by other eminent researchers on both augmented
 reality and computer-enhanced vision.
 
-## Any plans you have moving forward with your career journey
+## Future plans
 
 After graduation in December, I intend to pursue full-time employment at niche, yet
 intriguing tech companies in specialized fields. Possible candidates include fintech (JPMorgan & Chase, Bloomberg), and quant-based (Two Sigma).
