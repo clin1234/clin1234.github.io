@@ -10,6 +10,94 @@
 
 # Utterances of a Cynic
 
+## Making the Steam Linux client use system libs on (OpenSUSE)
+Posted on 4/09/2023.
+
+Work in progress...
+
+By invoking
+
+`pushd ~/.steam/root/ubuntu12_32; file * | grep ELF | cut -d: -f1 | LD_LIBRARY_PATH=. xargs ldd  | grep  "=>"|awk -F "=>" '{print $1}'|sort | uniq; popd`
+, the following libraries from my system that correspond to those from the Steam runtime are [here](stear32).
+
+(Abbreviated) output of `rpm -q --requires steam`, which is the installer, **NOT** the Steam runtime used for the games themselves:
+```
+(Mesa-libGL1-32bit if Mesa-libGL1)
+(libgbm1-32bit if libgbm1)
+(libnm0-32bit if libnm0)
+(libvulkan_intel-32bit if libvulkan_intel)
+(libvulkan_radeon-32bit if libvulkan_radeon)
+(nvidia-computeG04-32bit if nvidia-computeG04)
+(nvidia-computeG05-32bit if nvidia-computeG05)
+(nvidia-computeG06-32bit if nvidia-computeG06)
+(nvidia-glG04-32bit if nvidia-glG04)
+(nvidia-glG05-32bit if nvidia-glG05)
+(nvidia-glG06-32bit if nvidia-glG06)
+(x11-video-nvidiaG04-32bit if x11-video-nvidiaG04)
+(x11-video-nvidiaG05-32bit if x11-video-nvidiaG05)
+(x11-video-nvidiaG06-32bit if x11-video-nvidiaG06)
+...
+dbus-1-glib-32bit
+fontconfig-32bit
+glibc-32bit
+glibc-locale-base-32bit
+gtk2-engine-oxygen-32bit
+libICE6-32bit
+libSDL-1_2-0-32bit
+libSM6-32bit
+libX11-6-32bit
+libXdmcp6-32bit
+libXext6-32bit
+libXfixes3-32bit
+libXi6-32bit
+libXrandr2-32bit
+libXrender1-32bit
+libXtst6-32bit
+libatk-1_0-0-32bit
+libcairo2-32bit
+libcrypt1-32bit
+libcups2-32bit
+libcurl4-32bit
+libdbus-1-3-32bit
+libdrm2-32bit
+libfreetype6-32bit
+libgcc_s1-32bit
+libgcrypt20-32bit
+libgdk_pixbuf-2_0-0-32bit
+libglib-2_0-0-32bit
+libgmodule-2_0-0-32bit
+libgobject-2_0-0-32bit
+libgtk-2_0-0-32bit
+libogg0-32bit
+libopenal1-32bit
+libopenssl1_0_0-steam
+libopenssl1_0_0-steam-32bit
+libpango-1_0-0-32bit
+libpipewire-0_3-0-32bit
+libpixman-1-0-32bit
+libpng12-0-32bit
+libpulse0-32bit
+libstdc++6-32bit
+libtheora0-32bit
+libudev1-32bit
+libusb-1_0-0-32bit
+libva-drm2-32bit
+libva-glx2-32bit
+libva-x11-2-32bit
+libva2-32bit
+libvdpau1-32bit
+libvorbis0-32bit
+libvulkan1-32bit
+libxcb-dri2-0-32bit
+libxcb-glx0-32bit
+libz.so.1
+...
+```
+
+Now, onto to writing a spec file.
+
+
+
 ## My experience at Vanderbilt
 Posted on 8/08/2022.
 
