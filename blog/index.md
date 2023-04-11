@@ -18,24 +18,10 @@ Work in progress...
 By invoking
 
 `pushd ~/.steam/root/ubuntu12_32; file * | grep ELF | cut -d: -f1 | LD_LIBRARY_PATH=. xargs ldd  | grep  "=>"|awk -F "=>" '{print $1}'|sort | uniq; popd`
-, the following libraries from my system that correspond to those from the Steam runtime are [here](stear32).
+, the following libraries from my system that correspond to those from the Steam runtime are [here](stear32). First-party libraries are `lib`
 
 (Abbreviated) output of `rpm -q --requires steam`, which is the installer, **NOT** the Steam runtime used for the games themselves:
 ```
-(Mesa-libGL1-32bit if Mesa-libGL1)
-(libgbm1-32bit if libgbm1)
-(libnm0-32bit if libnm0)
-(libvulkan_intel-32bit if libvulkan_intel)
-(libvulkan_radeon-32bit if libvulkan_radeon)
-(nvidia-computeG04-32bit if nvidia-computeG04)
-(nvidia-computeG05-32bit if nvidia-computeG05)
-(nvidia-computeG06-32bit if nvidia-computeG06)
-(nvidia-glG04-32bit if nvidia-glG04)
-(nvidia-glG05-32bit if nvidia-glG05)
-(nvidia-glG06-32bit if nvidia-glG06)
-(x11-video-nvidiaG04-32bit if x11-video-nvidiaG04)
-(x11-video-nvidiaG05-32bit if x11-video-nvidiaG05)
-(x11-video-nvidiaG06-32bit if x11-video-nvidiaG06)
 ...
 dbus-1-glib-32bit
 fontconfig-32bit
@@ -90,13 +76,14 @@ libvorbis0-32bit
 libvulkan1-32bit
 libxcb-dri2-0-32bit
 libxcb-glx0-32bit
-libz.so.1
 ...
 ```
 
 Now, onto to writing a spec file.
 
+The latest
 
+Anywhere, here's the link: https://software.opensuse.org/package/steam.
 
 ## My experience at Vanderbilt
 Posted on 8/08/2022.
