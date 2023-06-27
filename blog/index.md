@@ -10,6 +10,15 @@
 
 # Utterances of a Cynic
 
+## Long overdue update
+Posted on 6/26/2023
+
+In the time since my last post, I replaced my main laptop from an Acer Aspire 5 with a Ryzen 4700U and integrated graphics with a Razer Blade 17
+ containing a Core i7 12800H and discrete Nvidia RTX 3060 GPU.
+
+ Other than that, I spent my copious amounts of time lurking (too often) blogs that piqued my interest. I'm generous enough to release my list
+  here: https://ufile.io/1fqpnqsx. All you need is to import this OPML file into a supported news aggregator. This'll expire in 30 days.
+
 ## Making the Steam Linux client use system libs on (OpenSUSE)
 Posted on 4/09/2023.
 
