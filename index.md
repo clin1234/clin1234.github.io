@@ -12,6 +12,12 @@
 
 As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert anchor here_.
 
+## Consulting
+
+With close to 2 years of experience contributing to prominent open-source projects and development on Linux and Windows, my experience will help you
+ modernize your aging codebase, whether that may be upgrading to newer versions of C++ (and thus incorporate useful convenicnes), or fixing system-related issues
+  on Linux and Windows. Rates are tailorable to your specific needs: contact **[here](mailto:clin@rollins.edu)** 
+
 # Miscellaneous certifications
 
 Because of limited space to squeeze my resume into a single page, certifications that I deem secondary in terms of importance will be listed here.
