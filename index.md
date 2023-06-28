@@ -16,7 +16,11 @@ As a news program would say: Wilkommen zu Tagesschau. Heut in Studio, _insert an
 
 With close to 2 years of experience contributing to prominent open-source projects and development on Linux and Windows, my experience will help you
  modernize your aging codebase, whether that may be upgrading to newer versions of C++ (and thus incorporate useful convenicnes), or fixing system-related issues
-  on Linux and Windows. Rates are tailorable to your specific needs: contact **[here](mailto:clin@rollins.edu)** 
+  on Linux and Windows. Rates are tailorable to your specific needs: contact **[here](mailto:clin@rollins.edu)**.
+
+Also, I have prior experience assisting clients with the purchase of one commerical property and a few residential ones all across Central Florida and 
+the Tampa metropolitan area, just in the past year alone. If you need assistance in relocation or setting up shop anywhere in Florida, I am also a certified realtor. See my above email address, or
+ my [real estate company](https://www.baystreetgroupfl.com/).
 
 # Miscellaneous certifications
 
