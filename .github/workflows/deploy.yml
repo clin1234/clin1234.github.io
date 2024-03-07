@@ -7,12 +7,10 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger GitHub pages rebuild
-        run: |
-          curl --fail --request POST \
-            --url https://api.github.com/repos/${{ github.repository }}/pages/builds \
-            --header "Authorization: Bearer $USER_TOKEN"
-        env:
-          # You must create a personal token with repo access as GitHub does
-          # not yet support server-to-server page builds.
-          USER_TOKEN: ${{ secrets.USER_TOKEN }}
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v4.0.4
+            
+            
