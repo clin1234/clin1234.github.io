@@ -10,6 +10,13 @@
 
 # Utterances of a Cynic
 
+## Another long overdue update
+Posted 3/7/2024
+
+Not much has changed, except I run Canary builds of Windows Insider (very few crashes, surprisingly) and fetch (stripped) debug symbols of MS projects (binaries included with Canary builds, Office, Visual Studio, etc). Currently, my cache is ~450GB.
+
+One topic that piqued my interest over the last few months is related to symbol fetching. Specifically, I was fascinated by the following two articles (see [here](https://www.emergetools.com/blog/posts/symbolicating-swiftui-and-any-apple-framework-part-2) and [here](https://www.emergetools.com/blog/posts/symbolicating-swiftui-and-any-apple-framework)) on automatically fetching debug symbols matching all Apple frameworks from Apple's servers, not just frameworks that come bundled with symbol names. If I have some way to get developer access to a Mac computer, the [ETSymbolication repo](https://github.com/EmergeTools/ETSymbolication) would greatly aid debugging macOS and iOS apps and their crash logs.
+
 ## Long overdue update
 Posted on 6/26/2023
 
