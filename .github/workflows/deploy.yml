@@ -1,7 +1,7 @@
 # File: .github/workflows/refresh.yml
 name: Refresh
 
-on: workflow_dispatch
+on: push
 
 jobs:
   # Build job
