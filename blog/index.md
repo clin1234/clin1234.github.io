@@ -17,7 +17,49 @@ Not much has changed, except I run Canary builds of Windows Insider (very few cr
 
 One topic that piqued my interest over the last few months is related to symbol fetching. Specifically, I was fascinated by the following two articles (see [here](https://www.emergetools.com/blog/posts/symbolicating-swiftui-and-any-apple-framework-part-2) and [here](https://www.emergetools.com/blog/posts/symbolicating-swiftui-and-any-apple-framework)) on automatically fetching debug symbols matching all Apple frameworks from Apple's servers, not just frameworks that come bundled with symbol names. If I have some way to get developer access to a Mac computer, the [ETSymbolication repo](https://github.com/EmergeTools/ETSymbolication) would greatly aid debugging macOS and iOS apps and their crash logs.
 
-Also, deploying GH Pages have become more painful.
+Also, deploying GH Pages have become more painful. For some reason, changes on my pages do NOT automatically trigger a rebuild, so I am forced to write a GH Actions file to do this for me:
+```
+# File: .github/workflows/refresh.yml
+name: Refresh
+
+on: push
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+
+  # Deployment job
+  deploy:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+            
+```
 
 ## Long overdue update
 Posted on 6/26/2023
