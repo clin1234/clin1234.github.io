@@ -23,6 +23,8 @@ jobs:
 
   # Deployment job
   deploy:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       id-token: write
       pages: write
