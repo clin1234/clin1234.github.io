@@ -10,10 +10,10 @@
 
 # About Me
 
-I am a student at Rollins College pursuing a bachelor's degree in Computer Science and Mathematics, with special interests in compilers, interpreters, and systems programming.
+I am a (former) student at Rollins College pursuing a bachelor's degree in Computer Science and Mathematics, with special interests in compilers, interpreters, and systems programming.
 Also fond of quips in Latin.
 
-At the moment, my primary development environment is Windows 10 Pro Insider Edition. I eventually plan to migrate to Linux, perhaps a Gentoo-based distribution or Fedora Rawhide, assuming no previous technical debt prevents such migration. For detractors:
+At the moment, my primary development environment is Windows ~~10~~ 11 Pro Insider Edition. ~~I eventually plan to migrate to Linux, perhaps a Gentoo-based distribution or Fedora Rawhide, assuming no previous technical debt prevents such migration.~~ I dual-boot with Fedora Rawhide. For detractors:
 
 <div align="center">
 <p>
