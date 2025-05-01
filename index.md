@@ -26,7 +26,7 @@ the Tampa metropolitan area, just in the past year alone. If you need assistance
 
 Because of limited space to squeeze my resume into a single page, certifications that I deem secondary in terms of importance will be listed here.
 
-* [Image Porcessing with Python](https://www.datacamp.com/statement-of-accomplishment/track/0903c21f7f062f4de6ac39c080734596366bcadc)
+* [Image Processing with Python](https://www.datacamp.com/statement-of-accomplishment/track/0903c21f7f062f4de6ac39c080734596366bcadc)
 
 ## Links (Pun is intentional.)
 
