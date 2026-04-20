@@ -40,7 +40,7 @@ TLDR for the very unfortunate souls not enlightened by my wonderful talk:
 #endif
 ```
   - Multi-phase: add a `PyModuleDef_Slot` with `Py_mod_gil` set to `Py_MOD_GIL_NOT_USED`.
-* Language and tool support: Cython (type annotations for efficient, compatible code), PyBind11 ([free-threading support](https://pybind11.readthedocs.io/en/stable/advanced/misc.html#free-threading-support) , `PYBIND11_MODULE(..., m, py::mod_gil_not_used())`), PyO3 /Rust (since 0.28, [assumes Rust code is thread-safe](https://pyo3.rs/v0.28.3/free-threading.html?highlight=gil_used#supporting-free-threaded-python-with-pyo3) ; opt out with `#[pyo3::pymodule(gil_used = true)]`).
+* Language and tool support: [Cython](https://cython.readthedocs.io/en/latest/src/userguide/freethreading.html) (type annotations for efficient, compatible code), PyBind11 ([free-threading support](https://pybind11.readthedocs.io/en/stable/advanced/misc.html#free-threading-support) , `PYBIND11_MODULE(..., m, py::mod_gil_not_used())`), PyO3 /Rust (since 0.28, [assumes Rust code is thread-safe](https://pyo3.rs/v0.28.3/free-threading.html?highlight=gil_used#supporting-free-threaded-python-with-pyo3) ; opt out with `#[pyo3::pymodule(gil_used = true)]`).
 
 * Testing: environment variable `PYTHONMALLOC=debug` and `PYTHON_GIL=0`, [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and [ThreadSanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html). The [cpython-sanity](https://github.com/nascheme/cpython_sanity) project provides pre-built Docker images of CPython with ASan and TSan enabled. Build wheels targeting free-threaded Python using versions ending in T (e.g., 3.13.0T).
 
