@@ -10,6 +10,45 @@
 
 # Utterances of a Cynic
 
+## My contributions to Python and its ecosystem
+Posted 4/20/2026
+
+Since 2024, I've contributed profusely to both the CPython interpreter and popular packages, mainly low-level building blocks of other popular packages.
+
+By commits:
+
+* CPython: https://github.com/python/cpython/commits/main/?author=clin1234
+* pyo3: https://github.com/PyO3/pyo3/commits/main/?author=clin1234
+* python-zstandard: https://github.com/indygreg/python-zstandard/commits/main/?author=clin1234
+* pywin32: https://github.com/mhammond/pywin32/commits/main/?author=clin1234
+* greenlet: https://github.com/python-greenlet/greenlet/commits/master/?author=clin1234
+* tach: https://github.com/tach-org/tach/commits/main/?author=clin1234
+* macchina: https://github.com/Macchina-CLI/macchina/commits/main/?author=clin1234
+
+Taking together my contributions, they strengthen Python’s ecosystem in multiple layers: improving the interpreter itself, enhancing cross‑language integration via Rust, and improving
+usefulness of key platform‑specific and concurrency libraries. That shows my focus on low‑level performance, systems integration, and developer tooling—areas that have broad impact across Python applications and libraries. In particular, free-threading is becoming popular among popular packages: as of this post, [over HALF of the 360 most downloaded packages](https://hugovk.dev/free-threaded-wheels/) support it!
+
+TLDR for the very unfortunate souls not enlightened by my wonderful talk:
+
+* Changes to the runtime: a garbage collector that doesn’t rely on linked lists, fine-grained internal locks on built-in `dict` / `set` / `list`, modified reference counting to reduce contention, and critical sections (PyBeginCriticalSection / PyEndCriticalSection) for per-object locking, useful for custom objects to be exposed via the C API. `PyDict_Next` is not thread-safe and must be wrapped in a critical section.
+
+* Module initialization:
+  - Single-phase: call `PyUnstable_Module_SetGIL` in the extension module’s entry point `PyInit_<module name>`:
+```c
+#ifdef Py_GIL_DISABLED
+    PyUnstable_Module_SetGIL(m, Py_MOD_GIL_NOT_USED);
+#endif
+```
+  - Multi-phase: add a `PyModuleDef_Slot` with `Py_mod_gil` set to `Py_MOD_GIL_NOT_USED`.
+* Language and tool support: Cython (type annotations for efficient, compatible code), PyBind11 ([free-threading support](https://pybind11.readthedocs.io/en/stable/advanced/misc.html#free-threading-support) , `PYBIND11_MODULE(..., m, py::mod_gil_not_used())`), PyO3 /Rust (since 0.28, [assumes Rust code is thread-safe](https://pyo3.rs/v0.28.3/free-threading.html?highlight=gil_used#supporting-free-threaded-python-with-pyo3) ; opt out with `#[pyo3::pymodule(gil_used = true)]`).
+
+* Testing: environment variable `PYTHONMALLOC=debug` and `PYTHON_GIL=0`, [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and [ThreadSanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html). The [cpython-sanity](https://github.com/nascheme/cpython_sanity) project provides pre-built Docker images of CPython with ASan and TSan enabled. Build wheels targeting free-threaded Python using versions ending in T (e.g., 3.13.0T).
+
+Additionally, I presented a very informative talk at PyTexas 2026 on porting Python packages with compiled-extensions to be compatible without the GIL.
+Proof: https://www.pytexas.org/2026/schedule/talks/#tying-up-loose-threads-making-your-project-no-gil-ready
+
+Inspired by [Bernat Gabor's writeup](https://bernat.tech/posts/pytexas-2026-recap/), with additional details. ~~(please notice me and my greatness)~~
+
 ## Another long overdue update
 Posted 3/7/2024
 
