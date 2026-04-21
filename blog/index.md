@@ -49,6 +49,8 @@ Proof: https://www.pytexas.org/2026/schedule/talks/#tying-up-loose-threads-makin
 
 Inspired by [Bernat Gabor's writeup](https://bernat.tech/posts/pytexas-2026-recap/), with additional details. ~~(please notice me and my greatness)~~
 
+I've met a great variety of storied attendees: corporate and freelance, seasoned and newly-graduated, conversing about a wide range of topics: technical and social, quotidian and eccentric, informative and argumentative. Special shoutout to [Bernat Gabor](https://bernat.tech), [Moshe Zadka](https://cobordism.com/), [Scott Irwin](https://fosstodon.org/@Nekokawaigari), [Al Sweigart](https://alsweigart.com/), [Tristan Lee](https://tristanl.ee/), [Jacob Coffee](https://scriptr.dev/), and [Mason Egger](https://mason.dev/).
+
 ## Another long overdue update
 Posted 3/7/2024
 
