@@ -17,13 +17,13 @@ Since 2024, I've contributed profusely to both the CPython interpreter and popul
 
 By commits:
 
-* CPython: https://github.com/python/cpython/commits/main/?author=clin1234
-* pyo3: https://github.com/PyO3/pyo3/commits/main/?author=clin1234
-* python-zstandard: https://github.com/indygreg/python-zstandard/commits/main/?author=clin1234
-* pywin32: https://github.com/mhammond/pywin32/commits/main/?author=clin1234
-* greenlet: https://github.com/python-greenlet/greenlet/commits/master/?author=clin1234
-* tach: https://github.com/tach-org/tach/commits/main/?author=clin1234
-* macchina: https://github.com/Macchina-CLI/macchina/commits/main/?author=clin1234
+* [CPython](https://github.com/python/cpython/commits/main/?author=clin1234))
+* [pyo3](https://github.com/PyO3/pyo3/commits/main/?author=clin1234)
+* [python-zstandard](https://github.com/indygreg/python-zstandard/commits/main/?author=clin1234)
+* [pywin32](https://github.com/mhammond/pywin32/commits/main/?author=clin1234)
+* [greenlet](https://github.com/python-greenlet/greenlet/commits/master/?author=clin1234)
+* [tach](https://github.com/tach-org/tach/commits/main/?author=clin1234)
+* [macchina](https://github.com/Macchina-CLI/macchina/commits/main/?author=clin1234)
 
 Taking together my contributions, they strengthen Python’s ecosystem in multiple layers: improving the interpreter itself, enhancing cross‑language integration via Rust, and improving
 usefulness of key platform‑specific and concurrency libraries. That shows my focus on low‑level performance, systems integration, and developer tooling—areas that have broad impact across Python applications and libraries. In particular, free-threading is becoming popular among popular packages: as of this post, [over HALF of the 360 most downloaded packages](https://hugovk.dev/free-threaded-wheels/) support it!
