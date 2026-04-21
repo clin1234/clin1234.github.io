@@ -17,7 +17,7 @@ Since 2024, I've contributed profusely to both the CPython interpreter and popul
 
 By commits:
 
-* [CPython](https://github.com/python/cpython/commits/main/?author=clin1234))
+* [CPython](https://github.com/python/cpython/commits/main/?author=clin1234)
 * [pyo3](https://github.com/PyO3/pyo3/commits/main/?author=clin1234)
 * [python-zstandard](https://github.com/indygreg/python-zstandard/commits/main/?author=clin1234)
 * [pywin32](https://github.com/mhammond/pywin32/commits/main/?author=clin1234)
