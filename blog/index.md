@@ -10,7 +10,7 @@
 
 # Utterances of a Cynic
 
-## My experience in the Open Source Summit NA
+## My experience in the Open Source Summit NA and Embedded Linux Conference NA
 
 Laat modified 5/20/2026
 
