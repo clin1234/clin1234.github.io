@@ -10,6 +10,19 @@
 
 # Utterances of a Cynic
 
+## My experience in the Open Source Summit NA
+
+Laat modified 5/20/2026
+
+To summarize three days of networking, and interesting talks, and zany exhibitors, it's best 
+to present them as a series of photographs:
+
+* [Day 1](https://postimg.cc/gallery/XJfb44z)
+* [Day 2](https://postimg.cc/gallery/C0S9x0H)
+* [Day 3](https://postimg.cc/gallery/JHY3bvf)
+
+(Of course I have the longest ribbon chain. Pretty sure I'm the only one that exhibits such behavior)
+
 ## My contributions to Python and its ecosystem
 Posted 4/20/2026
 
