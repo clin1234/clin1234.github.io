@@ -10,6 +10,19 @@
 
 # Utterances of a Cynic
 
+## My experience in the Linux Embedded Conference NA
+
+Last modified 5/22/2026
+
+Right after the Open Source Summit NA 2026, here's two more days of networking,
+and interesting talks on a more focused field about Linux's security stack, BPF,
+AppArmor, and more.
+(no interesting swag from exhibitors, sorry :-(...  ). Again, best expressed through a series
+of photographs that I took:
+
+* [Day 1](https://postimg.cc/gallery/gxrdt2J)
+* [Day 2](https://postimg.cc/gallery/XNFSkTk)
+
 ## My experience in the Open Source Summit NA and Embedded Linux Conference NA
 
 Laat modified 5/20/2026
