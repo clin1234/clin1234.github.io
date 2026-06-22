@@ -70,8 +70,7 @@ TLDR for the very unfortunate souls not enlightened by my wonderful talk:
 
 * Testing: environment variable `PYTHONMALLOC=debug` and `PYTHON_GIL=0`, [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and [ThreadSanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html). The [cpython-sanity](https://github.com/nascheme/cpython_sanity) project provides pre-built Docker images of CPython with ASan and TSan enabled. Build wheels targeting free-threaded Python using versions ending in T (e.g., 3.13.0T).
 
-Additionally, I presented a very informative talk at PyTexas 2026 on porting Python packages with compiled-extensions to be compatible without the GIL.
-Proof: https://www.pytexas.org/2026/schedule/talks/#tying-up-loose-threads-making-your-project-no-gil-ready
+Additionally, I presented a [very informative talk at PyTexas 2026 on porting Python packages with compiled-extensions to be compatible without the GIL.](https://www.pytexas.org/2026/schedule/talks/#tying-up-loose-threads-making-your-project-no-gil-ready)
 
 Inspired by [Bernat Gabor's writeup](https://bernat.tech/posts/pytexas-2026-recap/), with additional details. ~~(please notice me and my greatness)~~
 
