@@ -76,7 +76,7 @@ containing C, C++, Cython, or Rust code, including compatbility with the free-th
 * [Free-threaded](https://gist.github.com/clin1234/6cdb5150ba3298576ca54fa07c017517)
 
 An example:
-<script src="https://gist.github.com/username/6cdb5150ba3298576ca54fa07c017517.js?file=aiohttp.md"></script>
+<script src="https://gist.github.com/clin1234/6cdb5150ba3298576ca54fa07c017517.js?file=aiohttp.md"></script>
 
 #### msgpack-python
 
