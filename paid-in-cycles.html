@@ -1,0 +1,531 @@
+<title>Paid in Cycles</title>
+
+<style>
+  :root{
+    --bg: #F5F6F2;
+    --bg-raised: #EAEBE4;
+    --bg-raised-2: #E1E3D9;
+    --ink: #1B1E24;
+    --ink-soft: #52565F;
+    --ink-faint: #82868D;
+    --rule: #D2D5CB;
+    --accent: #B5651D;
+    --accent-ink: #8A4C15;
+    --accent-soft: #E9D2B4;
+    --accent-bg: rgba(181,101,29,0.09);
+    --shadow: rgba(27,30,36,0.06);
+    --code-ink: #6b3f0f;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #14161B;
+      --bg-raised: #1C1F26;
+      --bg-raised-2: #262A33;
+      --ink: #E9E7DC;
+      --ink-soft: #ADB1B9;
+      --ink-faint: #767B85;
+      --rule: #333844;
+      --accent: #E0913D;
+      --accent-ink: #F0B06B;
+      --accent-soft: #4A3620;
+      --accent-bg: rgba(224,145,61,0.10);
+      --shadow: rgba(0,0,0,0.35);
+      --code-ink: #f0c07a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #14161B;
+    --bg-raised: #1C1F26;
+    --bg-raised-2: #262A33;
+    --ink: #E9E7DC;
+    --ink-soft: #ADB1B9;
+    --ink-faint: #767B85;
+    --rule: #333844;
+    --accent: #E0913D;
+    --accent-ink: #F0B06B;
+    --accent-soft: #4A3620;
+    --accent-bg: rgba(224,145,61,0.10);
+    --shadow: rgba(0,0,0,0.35);
+    --code-ink: #f0c07a;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ text-size-adjust: 100%; }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 1.09rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono{
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .page{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  @media (max-width: 640px){
+    .page{ padding: 3rem 1.25rem 4rem; }
+    body{ font-size: 1.03rem; }
+  }
+
+  /* ---------------- Hero ---------------- */
+
+  .eyebrow{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    font-weight: 500;
+    margin-bottom: 1.4rem;
+  }
+  .eyebrow::before{
+    content: "";
+    width: 1.4em;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  h1{
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+
+  .dek{
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 56ch;
+    margin: 0 0 2.6rem;
+    text-wrap: pretty;
+  }
+
+  .statrow{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 3.4rem;
+  }
+  .stat{
+    background: var(--bg);
+    padding: 1.2rem 1.1rem;
+  }
+  .stat .num{
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.55rem;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+    line-height: 1.1;
+  }
+  .stat .cap{
+    font-size: 0.83rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-top: 0.35rem;
+    line-height: 1.35;
+  }
+  @media (max-width: 640px){
+    .statrow{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------------- Section headers ---------------- */
+
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin: 5.2rem 0 0.6rem;
+    padding-top: 0.2rem;
+  }
+  .section-head .idx{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .section-head h2{
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .section-sub{
+    color: var(--ink-faint);
+    font-size: 0.95rem;
+    margin: 0 0 2.2rem;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2rem;
+  }
+
+  /* ---------------- Tips ---------------- */
+
+  .tip{
+    margin: 2.3rem 0;
+  }
+  .tip h3{
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.18rem;
+    font-weight: 600;
+    margin: 0 0 0.55rem;
+    line-height: 1.35;
+  }
+  .tip p{
+    margin: 0 0 0.9rem;
+    max-width: 66ch;
+  }
+  .tip p:last-child{ margin-bottom: 0; }
+
+  strong{ font-weight: 700; }
+  em{ font-style: italic; }
+
+  a{ color: var(--accent-ink); text-decoration-color: var(--accent-soft); text-underline-offset: 2px; }
+  a:hover{ text-decoration-color: var(--accent-ink); }
+
+  code, .kbd{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88em;
+    background: var(--bg-raised);
+    color: var(--code-ink);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  pre.flags{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.86rem;
+    line-height: 1.7;
+    background: var(--bg-raised);
+    border-left: 3px solid var(--accent);
+    color: var(--ink);
+    padding: 1rem 1.2rem;
+    margin: 1.1rem 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre.flags .fl{ color: var(--code-ink); }
+  pre.flags .cm{ color: var(--ink-faint); font-style: italic; }
+
+  blockquote{
+    margin: 1.3rem 0;
+    padding: 0.2rem 0 0.2rem 1.2rem;
+    border-left: 2px solid var(--accent);
+    color: var(--ink-soft);
+    font-style: italic;
+    max-width: 62ch;
+  }
+  blockquote cite{
+    display: block;
+    font-style: normal;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-top: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .tablewrap{
+    overflow-x: auto;
+    margin: 1.2rem 0 1.5rem;
+  }
+  table{
+    border-collapse: collapse;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.84rem;
+    min-width: 420px;
+  }
+  th, td{
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  th{
+    color: var(--ink-faint);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+  td.hi{ color: var(--accent-ink); font-weight: 600; }
+
+  .divider{
+    height: 1px;
+    background: var(--rule);
+    margin: 0.5rem 0 2rem;
+  }
+
+  footer{
+    margin-top: 5rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  footer .mono{
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+<div class="page">
+
+  <div class="eyebrow">Field notes &middot; HFT University challenges</div>
+  <h1>Paid in Cycles</h1>
+  <p class="dek">What actually moved a leaderboard score across fifteen-odd C++ challenges and eight Rust ones, and the specific, repeatable ways a laptop will lie to you about which change won.</p>
+
+  <div class="statrow">
+    <div class="stat"><span class="num">1.56&times;</span><span class="cap">how far off local cycle counts ran, once the dev box's own clock was calibrated</span></div>
+    <div class="stat"><span class="num">31 cyc</span><span class="cap">the certified runner's timestamp counter advances in steps this size, so some scores can only land on multiples of it</span></div>
+    <div class="stat"><span class="num">16.6&times;</span><span class="cap">the certified blowup from one fallback path fitted to the public data's range, invisible until it ran off-band</span></div>
+  </div>
+
+  <p>Every one of these challenges is scored the same way, whatever language it's written in: a workload, a stopwatch, and a number that clears a threshold or doesn't. Chase that number long enough and a pattern shows up that has nothing to do with algorithms. Roughly half the real wins below came from a data structure. The other half came from figuring out that the machine on the desk was lying, in three or four specific and repeatable ways, and building the habit of catching it before it turned into a wrong conclusion.</p>
+
+  <p>What follows is in three passes. The first applies whichever language you're writing in, and it's mostly about the distance between a laptop and the box that actually scores you. The second is C++. The third is Rust, which the sandbox's rules turn into a genuinely different discipline than porting C++ habits over: no <code>unsafe</code> changes what "fast" is even allowed to mean.</p>
+
+  <!-- ================= SECTION 1 ================= -->
+
+  <div class="section-head"><span class="idx mono">01</span><h2>Both languages</h2></div>
+  <p class="section-sub">Mostly about trusting the wrong measurement, and reading the scoring rule as a spec rather than a vibe.</p>
+
+  <div class="tip">
+    <h3>Your laptop and the grader are not the same chip: plan for it</h3>
+    <p>The obvious move, once you can build locally, is <code>-march=native</code> and trust whatever numbers come back. That's fine until your dev machine and the certified box aren't the same microarchitecture, which turned out to be exactly the case here: a Golden Cove/Gracemont laptop building for itself, a Zen 2 server doing the actual scoring. <code>-march=native</code> locally tunes and schedules for the wrong chip, silently, with no warning that it did.</p>
+    <p>It already inverted a result once. Two designs for a FIX-message parser measured 16% apart on the laptop, and the "worse" one (it stored every delimiter to a stack array and reloaded it through different index registers) won locally because Alder Lake forwards store-to-load traffic cheaply. It <em>lost</em> on the certified box by 3%, because Zen 2's store forwarding is slower and its memory disambiguation weaker. Same source, same optimization level, opposite verdict, and the only way to have seen it coming was to look at the actual instruction stream on both targets.</p>
+    <p>The rule that survived: local timing is a regression guard, not a design chooser. It's valid for algorithmic changes: fewer instructions, fewer allocations, less memory touched. It is not valid for anything microarchitectural: branchless vs. branch, store/reload vs. register residency, dependency-chain shape, unrolling. For those, emit the target's assembly and read it, or run it through a cycle model built for that chip.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Calibrate your own clock before you believe a single number it prints</h3>
+    <p>A subtler version of the same problem: even holding the chip constant, the wall-clock instruction (<code>RDTSC</code> here) doesn't necessarily tick at the core's actual frequency. On the laptop used for most of this, the timestamp counter ran at a fixed 2.803&nbsp;GHz while the core executed around 4.3&ndash;4.5&nbsp;GHz, so every locally reported cycle count was quietly <strong>1.56&times; too small</strong>. Every single one, on every challenge, for the whole project, until it was caught.</p>
+    <p>You can measure your own ratio directly: time a long chain of <em>dependent</em> multiplies (<code>imul %r,%r</code> chained, three cycles each on more or less any modern core) with the harness's own clock read, and divide. Don't use a dependent add as the anchor: on at least one core it retires faster than the dependency should allow and gives you a nonsense ratio. The multiply chain is the one that held up.</p>
+    <p>Once that correction went in, a long-running mystery closed on its own: a parser that looked roughly 2&times; slower on the certified server than locally turned out to be running at almost exactly the predicted speed once the units were fixed: 415&ndash;447 local ticks &times; 1.558 landed within a rounding error of the actual certified score. It wasn't a different workload. It was a clock that had never been calibrated.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Widen the cycle model's dispatch width, or it will hide your best wins</h3>
+    <p>If you reach for a static cycle-accuracy tool for the target microarchitecture, check its default dispatch width against the real chip's. The stock Zen 2 model in the tool used across this project assumes 4-wide dispatch; the real core retires up to six macro-ops per cycle. At the narrow default, the model saturates on dispatch and hides latency-chain improvements almost entirely — a change that was genuinely a 31% win (3.006 &rarr; 2.064 cycles per iteration, confirmed on the real disassembly) reported as a 6% one under the default width. Pass the wider dispatch explicitly whenever you're modeling this chip; trust the narrow default only as a floor, never as a verdict.</p>
+  </div>
+
+  <div class="tip">
+    <h3>The certified run is a different program, not a different roll of the dice</h3>
+    <p>This one is worth taking literally, because it's not a guess. It's how the admin described it directly on the forum:</p>
+    <blockquote>"The public benchmark you run locally and the private benchmark used for scoring on the server are completely different programs. They share the same challenge interface but measure different things under different conditions&nbsp;&hellip; it uses a different workload, different data, and different measurement methodology."<cite>HFT University forum, on a local/certified score mismatch</cite></blockquote>
+    <p>What that actually rules out is broader than hard-coded constants. Any construct whose <em>cost</em> depends on inputs staying inside the public generator's range is a landmine: a fast path gated to a parameter band, a series expansion that's only valid there, a capacity sized to the public sample. One implied-volatility solver here was gated to a moneyness window and a bounded rate term; everything outside fell to a roughly 2,500-cycle bisection. Nothing in the fast path was wrong. It simply never ran on the certified data, and the score came back 16.6&times; worse than the local number promised.</p>
+    <p>The test that catches this before a submission does: run the solution on a deliberately wide, off-distribution input and compare the <em>throughput ratio</em> against the shipped workload, not the absolute time. If the ratio collapses once you're off the public band, you've found the landmine before it found you.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Read the scoring formula as a spec: it changes what "optimize" means</h3>
+    <p>Score definitions here were not uniform, and getting one wrong means you spend a session improving a statistic nobody's checking. Some challenges score a mean over a full run. Some score the 99th percentile of individual operation latencies. At least one effectively doubles that percentile, because the harness's per-iteration operation count and the divisor it reports against don't match, so a stated gold threshold of, say, 500 cycles actually requires a p99 of 250. Read that arithmetic before you pick a target number.</p>
+    <p>A percentile metric changes what's worth fixing, too. The average operation is irrelevant and so is the single worst one; what matters is whichever operation <em>type</em> is currently supplying the slowest 1%. That answer moves as you fix things: on one scheduler it shifted three times across a single project, from the "fire an event" path to a memory-access path to an "insert" path, so the discipline isn't "measure once and optimize," it's "re-measure which type owns the tail after every change," because the next bottleneck is reliably a different function than the one you just fixed.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Know the tick size before you chase a rung on the leaderboard</h3>
+    <p>The certified runner's own clock advances in coarse steps of about 31 cycles, so any score built from it (this project saw it on a doubled-percentile metric) can only land on specific values: multiples of 62, in that case. A change worth 5 or 10 cycles is not a small win on that scale. It's invisible. It will not move the number on the board at all, and burning a submission on it teaches you nothing except that the submission counter went down by one. Save the sub-tick polish for changes you can already justify on other grounds, and don't read "the score didn't move" as "the change didn't work" without checking whether it could have moved in the first place.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Never trust a single run on a machine that throttles</h3>
+    <p>A one-shot comparison on a laptop that isn't thermally stable is closer to a coin flip than a measurement. The clearest example: a workload-shape comparison read <strong>+19.5% worse</strong> on a single run, which looked exactly like the "landmine tuned to the wrong workload" pattern above, and would have been a plausible reason to revert a real improvement. Re-run properly paired, every candidate timed round-robin in the same session against the same baseline, several rounds, compared on the median: the same comparison came back <strong>&minus;9.3% better</strong>. Two other apparent regressions in the same table vanished the same way. Treat anything under a 2&ndash;3% difference as noise unless it survived a paired run; a single number, however precise it looks, is not evidence.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Spend the untimed setup phase like it's free: it mostly is</h3>
+    <p>Nearly every harness here constructs your object, or calls a <code>build()</code>-style setup method, <em>before</em> starting the clock. Every allocation, every page fault, every table you can precompute belongs there instead of on the timed path: one string-map solution moved its table allocation into the untimed constructor and the timed cost dropped by roughly half.</p>
+    <p>Two traps sit right next to that gift, though. First, moving work the other way (say, sizing a structure exactly once its final size is known, which sounds like it should only help) can cost more than it saves if that sizing step lands inside the timed region instead of before it; one measured case went from 46 to 86 cycles per op purely from that. Second, and easy to miss in a per-iteration harness: "untimed" does not mean "free of a clock entirely." A harness that reconstructs your object and re-runs setup on every one of a few hundred iterations is still burning a real wall-clock time limit on that setup, even though none of it touches the score. A 512-candidate parameter search that took over half of a 60-second budget was both a timeout risk and, measured, simply the wrong answer — the searched result scored worse than a fixed constant would have.</p>
+  </div>
+
+  <div class="tip">
+    <h3>A plausible mechanism is not a result</h3>
+    <p>Across this project, a specific, reasoned prediction along the lines of "this should be faster because X" measured worse often enough that it's worth stating as a rule rather than a caveat: computing a value with pure mask arithmetic so a branch couldn't exist at all cost 7% over just leaving the (nearly-always-not-taken) branch in place. Skipping a redundant memory write on a store-forwarding theory cost 15%. Splitting one fused loop into two cleaner passes cost more than the "wasted" work it was removing. None of these were bad instincts — each one is the kind of thing worth trying — but every one of them shipped only after a paired measurement said no, and none of them would have been caught by reasoning alone. Measure, then believe the measurement over the story, including your own.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Keep the hot path out of the file the linker can't see into</h3>
+    <p>Neither track links with cross-file inlining: no LTO in the C++ builds, and the Rust harnesses build your module as a separate compilation unit from the code that calls it. Where the whole budget per operation is small enough that a call-and-return pair would be a meaningful fraction of it, the fix is the same in both languages: put the hot methods directly in the header (C++) or inline them where the calling module can actually see the body (Rust), rather than leaving them in a "implementation" file out of habit. Confirm it worked by disassembling the object the benchmark itself links against, not the file you edited: the compilation unit that matters is the caller's, and a method can look inlined in isolation while still costing a real call from there.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Read the site's own articles, but grade each one on its own measurement</h3>
+    <p>A good amount of what's useful for these challenges isn't on the challenge pages at all. It's in the site's article archive at <a href="https://hftuniversity.com/articles">hftuniversity.com/articles</a>, and on the maintainer's Substack at <a href="https://lucisqr.substack.com/">lucisqr.substack.com</a>, where Henrique Bucher writes measurement-driven pieces on exactly this kind of low-latency work. That corpus is worth reading closely, but it's mixed. Judge it article by article rather than by reputation.</p>
+    <p>A piece that turned out to matter is a genuinely rigorous one on when a predictable branch should stay a branch versus become a branchless select, benchmarked on both Zen 2 and Zen 5, on two different compilers, with real hardware performance counters behind every claim. Its core finding held up under independent testing and is worth carrying into any of these challenges: <em>a branch is bad exactly when both of its outcomes lead to the same subsequent memory load anyway</em>, which is a pure value-select, and branchless wins there because there's no work being skipped, just a choice being made. <em>A branch is good exactly when taking the predicted path lets you skip a load you probably don't need yet</em>, and a branchless form can't replicate that, because a <code>cmov</code> still has to consume the value it loaded. Predictability alone doesn't settle which case you're in; whether a load gets skipped does. Weaker pieces in the same archive lean on a single war story or an example (a near-coin-flip branch) that doesn't generalize to the heavily-skewed branches actually common in a tight inner loop. Read for the measurement, not the anecdote, and you'll get real signal out of a source that's inconsistent overall.</p>
+  </div>
+
+  <!-- ================= SECTION 2 ================= -->
+
+  <div class="section-head"><span class="idx mono">02</span><h2>C++</h2></div>
+  <p class="section-sub">What the compiler does behind your back at <code>-O2</code>, and what a Zen 2 grader actually charges you for.</p>
+
+  <div class="tip">
+    <h3>Pack the key before you pick the container</h3>
+    <p>Whenever a challenge caps key length at something that fits a machine register (six bytes, sixteen bytes), a "string map" is secretly an integer map, and the whole shape of the problem changes: load the bytes, mask to the real length, done. No <code>strcmp</code>, no <code>std::string</code>, no byte loop anywhere near the hot path.</p>
+    <p>Masking to length wants <code>BZHI</code> on this hardware (one uop on Zen 2) rather than <code>PEXT</code>/<code>PDEP</code>, which are microcoded and slow there even though they look like the "correct" bit-manipulation instruction for the job. Watch <code>BZHI</code>'s one sharp edge: its index saturates at the operand's own bit width, so masking a full 64-bit value with a 64-bit index silently clears the top bit instead of keeping everything: invisible on a 6-byte key (index never exceeds 48), a real wrong-answer bug the moment keys can reach 8 or 16 bytes. A small lookup table of precomputed masks sidesteps the saturation case entirely and costs nothing on the hot path.</p>
+  </div>
+
+  <div class="tip">
+    <h3>A per-op "don't optimize this away" barrier can hand back a value nobody wrote</h3>
+    <p>A pattern shows up across these harnesses: call your operation, then pass the result through a compiler barrier that's meant to stop the whole call from being optimized away as dead code. For a return value bigger than one register, at least one compiler version (GCC 14.2, <code>-O2</code>, this target) can satisfy that barrier by writing the result to one stack slot and then, at the point of actual use, reading it back from a <em>different</em> stack slot that nothing ever wrote to. It compiles cleanly, it passes a casual correctness check, and it fails one hundred percent of the time under the harness's real call shape: moving the correctness check to <em>before</em> the barrier hides the bug completely, which is exactly why it can ship unnoticed.</p>
+    <p>The fix is to make the value exist in exactly one place the compiler has no freedom to re-derive: an inline-asm output register with a memory clobber, not a per-field atomic load (which stays re-materializable and reproduces the same failure). Test for it with a payload whose fields carry a checkable relationship to each other, checked <em>after</em> the barrier. Anything that only checks before it will tell you nothing.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Not every branch wants to disappear</h3>
+    <p>The reconciliation rule from the general section is worth restating with the C++-specific failure mode attached: GCC will sometimes take a branchless, masked value-select you wrote on purpose and turn it <em>back</em> into a branch on the guarding condition (which, if unpredictable, reintroduces the exact cost you were removing). The fix isn't a ternary or a <code>cmov</code> hint; it's forcing the load to happen unconditionally and selecting the result with an all-ones/all-zeros mask (<code>(a &amp; m) | (b &amp; ~m)</code>), which leaves the compiler nothing to branch on. Confirm the fix by disassembling the actual hot loop — this is exactly the kind of codegen decision that won't show up by reading the source.</p>
+  </div>
+
+  <div class="tip">
+    <h3>A percentile metric can absorb a real win without showing it</h3>
+    <p>An optimization that clearly improves the <em>mean</em> case (eliminating a division from a per-item computation, say) can move a percentile-scored benchmark by exactly nothing, if the workload's actual tail is dominated by a different operation entirely. Always re-derive which operation type owns the top 1% after a change that "should" help, rather than assuming a mean-shaped win automatically shows up in a tail-shaped score.</p>
+  </div>
+
+  <div class="tip">
+    <h3>When you're only allowed to touch build flags, learn which ones actually do the thing</h3>
+    <p>A handful of the C++ challenges here are flags-only: the code is frozen, and the entire lever is the compiler command line. Two lessons from that surface generalize well beyond the specific loops involved.</p>
+    <p>First, flag names lie about scope more than you'd expect. <code>-funroll-loops</code> declines to unroll a loop whose trip count it can't determine statically (which includes any <code>while (cond)</code> search loop), while <code>-funroll-all-loops</code> ignores that restriction and is the actual discriminating flag for that shape. One sweep spent a whole session reading "no effect" because it only tried the first one.</p>
+    <p>Second, permission and mechanism are separate flags, and you often need both. Breaking a single serial floating-point accumulation chain into independent partial sums needs GCC's permission to reassociate floating-point math at all (which needs two more flags to even be legal to request) <em>and</em> a flag that actually hands each unrolled copy of the loop its own accumulator register:</p>
+    <pre class="flags">-O2 -march=native <span class="fl">-fassociative-math -fno-signed-zeros -fno-trapping-math</span>
+<span class="cm">                  # ^ the permission: reassociating FP math needs all three</span>
+    <span class="fl">-funroll-all-loops -fvariable-expansion-in-unroller</span>
+<span class="cm">                  # ^ the mechanism: actually unroll it, then split the accumulator</span></pre>
+    <p>Either half alone changes nothing measurable. Verify the result the same way as any structural change: real disassembly plus a cycle model at the target's true dispatch width, not the flag list's plausibility.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Killing a shared-library call boundary can remove more than a jump</h3>
+    <p>Where the hot path crosses into a shared library, the default Linux toolchain setup routes every call through a PLT stub with an indirect jump and (on a CET-enabled build) a landing-pad instruction that a Zen 2 core doesn't even need. Three flags took a five-taken-branch, four-endbr64 call sequence down to three branches and zero stubs: <code>-fno-plt</code> removes the stub itself and, because the resulting GOT load target doesn't change across a tight loop's iterations, opens the door for the compiler to hoist that load entirely out of the loop; <code>-fvisibility=hidden</code> on the callee makes the other boundary resolvable to a direct jump at link time instead of an interposable one; <code>-fcf-protection=none</code> drops the landing-pad instructions the hardware here has no use for. Verify with the linker's own relocation listing (a JUMP_SLOT count of zero is the tell) rather than trusting that the flags did what their names suggest.</p>
+    <p>One environment note worth having before you try this: if your dev machine builds PE/COFF binaries (MinGW on Windows, for instance), every one of these flags is a silent no-op locally, and the local benchmark numbers will look identical with or without them. Cross-compiling the same sources to ELF with a different toolchain and reading the actual relocations is the only way to see the effect at all before spending a submission on it.</p>
+  </div>
+
+  <div class="tip">
+    <h3>On a producer/consumer pipe, a faster producer can score worse</h3>
+    <p>Where the metric is end-to-end delivery latency through a queue (timestamp on push, read again on pop), the arithmetic is Little's law whether or not anyone states it that way: latency equals how many messages are sitting in the queue, times how long each one takes the consumer to service. If the consumer is doing more work per message than the producer (reading a clock, updating a histogram, exactly what a benchmark harness does), a producer that gets <em>faster</em> only means the queue fills up quicker, which makes the score <em>worse</em>. A design that reduces every cycle out of the consumer's own path is necessary but not sufficient; without something that also caps how deep the queue is allowed to run, the score can land on the overflow sentinel outright.</p>
+    <p>The honest fix is a bounded wait <em>inside</em> the producer's own call, before it publishes: since the harness stamped the message before that call started, the wait gets charged in full to the message that caused it, which is what makes it a real fix rather than a trick. The one that isn't legitimate, and cost a badge on this exact challenge before it was caught, is a pause placed <em>after</em> the publish: it drains the queue just as effectively while being charged to no message at all, and that's a fabricated number wearing a queueing fix's clothes.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Prefetch the side about to write; be suspicious of prefetching the side about to read</h3>
+    <p>On a cross-core or cross-CCX ring, the producer's next write to a slot that's cold in its own cache needs to acquire ownership of that cache line, and if that acquisition happens inside the measured window, the message pays for it. Issuing a write-intent prefetch several slots ahead of the current write moves that cost outside the window entirely, for free.</p>
+    <p>The consumer side is the opposite bet more often than intuition suggests. A read-ahead on the consumer takes a not-yet-consumed slot into a shared state early, which can force the producer's own publish to that slot into an invalidation it wouldn't otherwise have paid. That reintroduces, from the other direction, exactly the cost the producer-side prefetch was designed to remove. One reported gold score on this kind of challenge came down entirely to prefetching on the write side <em>only</em>; adding a look-ahead read on the consumer measured worse in isolation.</p>
+    <p>Where local hardware can't reproduce true cross-core placement (no core pinning available, say), a small sweep of the look-ahead depth is still worth running and checking against the model rather than trusting either extreme:</p>
+    <div class="tablewrap"><table>
+      <tr><th>look-ahead depth</th><th>producer prefetch</th><th>cycles/op</th></tr>
+      <tr><td>0</td><td>none</td><td>713</td></tr>
+      <tr><td>4</td><td>none</td><td>682</td></tr>
+      <tr><td>2</td><td>yes</td><td>589</td></tr>
+      <tr><td class="hi">2</td><td class="hi">none</td><td class="hi">589</td></tr>
+    </table></div>
+    <p>The shape is a U, not a straight line: a depth fit from only the first two points would have predicted the wrong direction for depth 0. Small, reproducible deltas like the middle two rows (three different builds landing on the identical number) are real signal on hardware this consistent; don't wave them away as noise just because they're small.</p>
+  </div>
+
+  <div class="tip">
+    <h3>One shared cache line beats two separate ones, whenever a poll is also the delivery</h3>
+    <p>The classic design for a cross-core marker-plus-payload handoff puts the "is it ready" flag on its own cache line, separate from the data. That costs two serialized cross-core transfers per message: one to learn the data is ready, a second to actually fetch it. Putting the marker and the payload in the same 64-byte line collapses that to one: the consumer's poll load <em>is</em> the load that delivers the data, because when the line arrives, it all arrives together. Measured against a split-line version on an uncontended pair, roughly 3&times; worse on a straight read/write loop, and its p99 was thirteen times its own p50. The split design doesn't just cost more on average, it occasionally stalls badly, which a percentile-scored challenge punishes hard.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Build the whole thing in registers before you publish it</h3>
+    <p>If a caller fills a struct field by field and you then read the whole struct back as one wide value to publish it, that's a store-to-load forwarding stall paid on the hot path: the store hasn't necessarily committed by the time the wide load wants it. Assembling the value directly from the values still sitting in registers (a vector-set intrinsic over the individual fields, say, rather than a load over the memory the caller just wrote) skips that stall entirely. If the compiler tries to reorder that assembly into the middle of a sequence of stores meant to happen back-to-back with nothing between them, an empty inline-asm barrier pinned at the right spot is enough to stop it. Confirmed by checking that the actual store sequence in the disassembly has nothing scheduled between the stores it's supposed to bracket.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Get runtime division out of anything that runs per element</h3>
+    <p>Zen 2's integer divider is not pipelined and costs somewhere around 40&ndash;60 cycles per operation — enough, on its own, to blow a tight per-element budget even when it's hidden inside an otherwise clean line of arithmetic like <code>remaining / weight</code>. If the actual set of divisors a challenge can produce is small and knowable (a handful of named weight sets, say), resolve each one to a shift when it happens to be a power of two, and fall back to a precomputed reciprocal (computed once, in the untimed setup) for the general case — never a live <code>idiv</code> on the hot path. This is the kind of cost that's easy to miss by reading the source, because the division looks like three characters of harmless arithmetic; grepping the actual disassembly for <code>idiv</code>/<code>div</code> after any change involving a runtime-variable divisor is cheap insurance.</p>
+  </div>
+
+  <!-- ================= SECTION 3 ================= -->
+
+  <div class="section-head"><span class="idx mono">03</span><h2>Rust</h2></div>
+  <p class="section-sub">Fast, safe, and exactly one door in — no <code>unsafe</code> changes which tricks are even on the table.</p>
+
+  <div class="tip">
+    <h3>Autovectorization is your only SIMD, and only one shape reliably earns it</h3>
+    <p>A sandbox that rejects <code>unsafe</code> closes off both <code>core::arch</code> intrinsics (which are <code>unsafe fn</code>s by definition) and the portable-SIMD API (which needs a crate-root feature attribute you can't set from a module the certified run doesn't let you touch). Every vector instruction you get has to come from LLVM deciding, on its own, to vectorize a plain loop.</p>
+    <p>Only one shape earned that reliably in testing: state kept in fixed-size arrays over a block, walked by a flat <code>for i in 0..BLOCK</code> loop with the whole computation written out in the body. Two things kill it silently, with no compiler warning and no error, and either one measured at roughly five times the cost of the version that vectorized: any inner loop inside the block loop, even one with a small constant bound, and factoring the body into a helper function that takes a mutable reference as an out-parameter. Check that a change actually vectorized by looking at the emitted assembly for the wide instruction form you expect — a scalar loop that used to vectorize can quietly stop the moment you refactor it, and nothing in the build output tells you that happened.</p>
+  </div>
+
+  <div class="tip">
+    <h3><code>Box&lt;[T; N]&gt;</code> plus a power-of-two mask is your bounds-check elimination</h3>
+    <p>With <code>get_unchecked</code> off the table, the pattern that actually removes a bounds check without <code>unsafe</code> is a heap array with a compile-time, power-of-two length (<code>Box&lt;[T; N]&gt;</code>, not <code>Vec&lt;T&gt;</code>, whose length is a runtime field the compiler can't reason about) indexed with <code>&amp; (N - 1)</code>. The compiler can then prove the index is always in range and drops the check.</p>
+    <p>Which indices you're allowed to mask this way is a correctness rule, not a style preference. An index derived from your own internal bookkeeping (a slot you allocated, a chain link you wrote) is safe to mask, because it's in range by construction and the mask is just telling the compiler what's already true. An index that arrives from outside your structure (an id, a symbol, anything the caller hands you) must never be masked, because masking silently aliases an out-of-range value onto a live slot instead of rejecting it; keep an explicit range check there instead, playing the same role a null check plays in C. Verify which is which by grepping the emitted assembly for the bounds-check panic call and resolving which source location each surviving one belongs to — on at least one of these challenges, every remaining check turned out to belong to the harness's own workload generator, not to any code actually on the hot path.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Make the address conditional, not the load</h3>
+    <p>A data-dependent length or bounds check that's genuinely close to a coin flip (which lengths often are, in a random workload) is exactly the branch you don't want on a hot path, and the usual safe-Rust instinct, <code>if len &gt;= N { wide read } else { narrow fallback }</code>, is precisely that branch. The fix is to make the pointer conditional instead of the control flow: try to obtain a reference to the wanted slice at the wanted offset, and fall back to a reference to a static zero buffer if it isn't there, then read through whichever reference won. Both arms are addresses, there's nothing to speculate, and the compiler is free to lower the whole thing to a couple of conditional moves with the load itself folded into the selected one — confirmed in the actual assembly, not assumed from the pattern's shape.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Two spellings that look equivalent can compile to different code</h3>
+    <p>In the same compiler, at the same optimization level, <code>Some(v).filter(|_| cond)</code> compiled branchless while both <code>cond.then_some(v)</code> and the explicit <code>if cond { Some(v) } else { None }</code> compiled to a real jump. There's no principled reason to have guessed that ordering in advance, and no reason to assume it holds across compiler versions: the only reliable move on a hot path is to check the generated assembly for whichever spelling you actually shipped, rather than trusting that "these are obviously the same thing" survives translation.</p>
+  </div>
+
+  <div class="tip">
+    <h3>"Not timed" doesn't mean "free of a clock"</h3>
+    <p>Several of these harnesses construct a fresh instance of your solution and call its setup method inside the overall iteration loop, hundreds of times, even though only a small inner region of each iteration is what actually gets timed. That setup work is invisible to the score. But it still runs inside the harness's overall wall-clock budget, and an expensive one can eat most of that budget or trigger an outright timeout, independent of and in addition to whatever it does to the number on the board. A parameter search over several hundred candidates, run once per iteration, consumed more than half of a sixty-second limit in one case; measured, it produced a worse score than a fixed constant besides. Budget setup work at roughly the total time limit divided by however many iterations the harness runs, and measure the wall clock directly rather than assuming "untimed" means "doesn't count."</p>
+  </div>
+
+  <div class="tip">
+    <h3>When the bottleneck is integer ports, not memory, trading a load in is a real win</h3>
+    <p>The instinct that a large table means "this is a memory problem" isn't automatically right — check the actual port pressure before acting on it. On one string-map lookup, a cycle model showed four integer ALU ports fully saturated while the address-generation ports sat two-thirds idle: an ALU-bound hot path wearing a memory-bound problem's costume. Once that was visible, the right move ran backwards from intuition: replacing an integer multiply (three ALU instructions) with a small table lookup (one ALU instruction plus one memory access) was a net win specifically because it moved work off the saturated ports and onto ports that had nothing else to do, even though it technically added a memory access to a table already described as "the memory problem." Let the actual port-pressure numbers decide which direction the trade should run; don't assume the direction from which resource looks scarce on paper.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Duplicate keys are a performance bug before they're a correctness one</h3>
+    <p>An append-only structure that never overwrites a repeated key looks correct under almost any test (the first inserted value is still findable, nothing panics) right up until a real-world key distribution repeats one value hundreds of times and every future lookup for it has to walk the entire accumulated chain. Check the actual duplicate distribution in whatever sample data you're given, not just its size; a single one-character key showing up hundreds of times inside a hundred-thousand-entry feed is a realistic shape, and fixing insert to overwrite rather than append fixed both the correctness question and a measured lookup regression at once.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Fold the length in, whenever fixed windows over a variable key overlap</h3>
+    <p>Covering a variable-length key with a small number of fixed-width reads (first eight bytes, last eight bytes, to span anything up to sixteen) is a clean, branchless way to touch a bounded key without a length-dependent loop. It also throws away the length by construction: two different short keys can produce byte-for-byte identical windows once you're only looking at a few fixed positions. Folding the actual length into whatever you build from those windows (a table-indexed salt works well, since its address depends only on a value you already know before any byte arrives) restores the distinction for free, without adding anything to the dependency chain those byte loads are on.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Diff the two harnesses before you port a design across languages</h3>
+    <p>Where a challenge exists in both a C++ and a Rust version, don't assume the two harnesses agree on what a field even means. One pair here diverged because the C++ harness resets an internal counter before every operation so a venue always hands back the exact id its generator reserved, and the Rust port dropped that call while repurposing the same argument slot for something else — so an id that looks like "our own order" in the Rust version can actually name an unrelated one entirely. A solution built against the documented intent, rather than against what the actual generator does, will be provably correct and still wrong. Read both operation loops side by side before assuming a design — or even a field's meaning — carries over.</p>
+  </div>
+
+  <div class="tip">
+    <h3>Invalidate only the half of a cache that could have changed</h3>
+    <p>Where a single update can only ever affect one of two derived results (an update to one leg of a synthetic instrument feeding exactly one of an implied bid or an implied ask, say), cache both results separately and invalidate only the one the update actually touches. Recomputing both "to be safe" on every write throws away a two-to-four-times reduction in work for no correctness benefit, since the untouched half is provably still valid; the discipline is knowing precisely which half that is for a given update; and most of the real win here came from getting that partition right and then doing almost nothing else.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <p>None of this replaces a genuinely better algorithm: every large jump in every challenge above still came from a structural idea, not a measurement trick. What the measurement discipline buys is smaller but load-bearing: it's the difference between a win that's real and a win that only exists on the machine that isn't scoring you.</p>
+
+  <footer>
+    <div class="mono">HFT UNIVERSITY &middot; C++ &amp; RUST CHALLENGES</div>
+  </footer>
+
+</div>
