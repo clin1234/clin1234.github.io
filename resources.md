@@ -60,3 +60,7 @@
 * [Summary of GitHub's flavor of Markdown](https://guides.github.com/features/mastering-markdown/)
 * [Github Flavored Markdown Spec](https://github.github.com/gfm/)
 * [Advanced Markdown](https://github.com/DavidWells/advanced-markdown)
+
+## HFT and Quant
+
+* [Paid in Cycles: My Writeup of Completing Challenges at HFT University](../paid-in-cycles.html)
