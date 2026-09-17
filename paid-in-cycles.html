@@ -487,44 +487,35 @@
   </div>
 
   <div class="tip">
-    <h3>Dropping a shared-library call boundary can remove more than a jump</h3>
-    <p>GCC on Linux routes every call through a PLT stub with an indirect jump and (on a CET-enabled build) a landing-pad instruction that a Zen 2 core doesn't even need.
-      Three flags reduced a five-taken-branch, four-endbr64 call sequence to three branches and zero stubs: <code>-fno-plt</code> removes the stub itself and,
-      because the resulting GOT load target doesn't change across a tight loop's iterations, lets the compiler hoist that load out of the loop;
-      <code>-fvisibility=hidden</code> on the callee makes the other boundary resolvable to a direct jump at link time, and
-      <code>-fcf-protection=none</code> drops the landing-pad instructions the CPU has no use for.
-      Also, verify with the linker's own relocation listing (a JUMP_SLOT count of zero is a useful sign) rather than trusting that the flags did what their names suggest.</p>
-    <p>On Windows with MinGW-w64 toolchain, every one of these flags does nothing, and the local benchmark numbers will look identical..</p>
+    <h3>Dropping a shared-library call boundary can remove a branch</h3>
+    <p>On GCC on Linux, every call goes through a PLT stub with an indirect jump, and (on a CET-enabled build) a landing-pad instruction, which is useless for a Zen 2 CPU.
+      Three flags trimmed a five branch sequence to three branches and zero stubs: <code>-fno-plt</code> removes the stub itself,and hoists the GOT load, whose target does not change across tight loop iterations;
+      <code>-fvisibility=hidden</code> on the callee resolves the other boundary to a direct jump at link time; and
+      <code>-fcf-protection=none</code> drops the landing-pad instructions the CPU doesn't care about.
+      And make sure, using the linker's relocation list (a zero JUMP_SLOT count is a good indicator), that it actually happened.</p>
+    <p>None of these flags works on Windows under the MinGW-w64 toolchain, and the local numbers will be exactly the same.</p>
   </div>
 
   <div class="tip">
-    <h3>On a producer/consumer pipe, a faster producer can score worse</h3>
-    <p>On challenges measuring end-to-end delivery latency through a queue (timestamp on push, read again on pop),
-      Little's law dominates: latency equals how many messages are sitting in the queue,
-      times how long each one takes the consumer to service. If the consumer is doing more work per message than the producer 
-      (reading a clock, updating a histogram, exactly what a benchmark harness does),
-      a producer that gets <em>faster</em> only means the queue fills up quicker, which makes the score <em>worse</em>.
-      Queues that reduces cycles out of the consumer's own path is not sufficient: without capping how deep the queue is,
-      the score can land on the overflow sentinel.</p>
-    <p>A bounded wait <em>inside</em> the producer's own call is the approach, before it publishes: since the harness stamped the message before that call,
-      the wait gets charged in full to the message that caused it. A misleading fix:
-      a pause placed <em>after</em> the publish:
-      it drains the queue just as effectively while being charged to no message at all.</p>
+    <h3>In a producer/consumer pipe, a faster producer can perform worse</h3>
+    <p>On challenges measuring end-to-end delivery latency through a queue (timestamp the message push, read the timestamp again on pop),
+      Little's law holds: latency is the number of messages in the queue times the service time per message.
+      If the consumer is handling more work per message than the producer (such as stamping the message's timestamp and updating a histogram, exactly the job the benchmark harness does), the 
+     faster producer just results in more queued messages and a worse score.
+      Queues that optimize the consumer's workload alone are not sufficient: without bounding the size of the queue, the overflow sentinel is the only possible score.</p>
+    <p>The solution is to add a bounded wait in the producer's call, before it publishes: since the harness stamps the message before the call, the wait will be fully charged to the message that caused it. Misleading solution: a delay in the producer after the publish: it will drain the queue in the same way, but with no message charged for it at all.</p>
   </div>
 
   <div class="tip">
     <h3>Prefetch writes; be suspicious of prefetching reads</h3>
-    <p>On a cross-core or cross-CCX ring, the producer's next write to a slot with a cold cache must acquire ownership of that cache line,
-      and if that acquisition happens inside the measured window, the message pays for it.
-      Issuing a write-intent prefetch several slots ahead of the current write moves that cost outside the window entirely, for free.</p>
-    <p>The consumer side is the opposite bet more often than it suggests.
-      A read-ahead on the consumer takes a not-yet-consumed slot into a shared state early,
-      which can force the producer's own publish to that slot into an invalidation.
-      That reintroduces, from the other direction, the cost the producer-side prefetch was designed to remove.
-      I got a gold submission on this kind of challenge by prefetching on the write side <em>only</em>, and
-      adding a look-ahead read on the consumer measured worse in isolation.</p>
-    <p>On my laptop, where it can't reproduce true cross-core placement,
-      a small sweep of the look-ahead depth is still worth running and evaluating:</p>
+    <p>
+For a cross-core or cross-CCX communication, the producer's write to a slot with a cold cache line must acquire the ownership of the line. If that occurs in the measurement window, the message will pay for that. Prefetching the next slot's line in advance will move that cost entirely outside the window, for free.
+    </p>
+    <p>
+    On the consumer side, it is the opposite. A read-ahead of the consumer takes the yet-unconsumed slot into a shared state early, which forces the producer's write to that slot to become an invalidation. This reintroduces, from the other side, the cost the producer-side prefetching was supposed to get rid of. I won a gold submission in this challenge by prefetching only in the producer side, and adding a look-ahead read in the consumer measured worse in isolation.  
+    </p>
+    <p>On my laptop, which can't reproduce cross-core placement,
+      a small look-ahead sweep is worth trying:</p>
     <div class="tablewrap"><table>
       <tr><th>look-ahead depth</th><th>producer prefetch</th><th>cycles/op</th></tr>
       <tr><td>0</td><td>none</td><td>713</td></tr>
@@ -533,34 +524,29 @@
       <tr><td class="hi">2</td><td class="hi">none</td><td class="hi">589</td></tr>
     </table></div>
     <p>
-      Small, reproducible deltas like the middle two rows (three different submissions landing on the identical number) are valuable on such devices.</p>
+
+Small, reproducible deltas, such as those shown in the middle two rows (three different submissions scoring the identical number) are valuable on such devices.
+      </p>
   </div>
 
   <div class="tip">
-    <h3>One shared cache line beats two separate ones, when polling is also the delivery</h3>
-    <p>The classic design for a cross-core marker-plus-payload handoff places the "is it ready" flag on its own cache line, separate from the data.
-      That costs two serialized cross-core transfers per message: one to check the flag, another to fetch.
-      Squishing the flag and the payload in the same 64-byte line collapses to one: the consumer's poll loop checks and fetches in the same cache line.
-      Measured against a split-line version on an uncontended pair shows that it's roughly 3&times; worse on a straight read/write loop, and its p99 was 13x its own p50.
-      The split design also occasionally stalls, which a percentile-scored challenge punishes with impunity.</p>
+    <h3>One cache line is better than two, when polling is the delivery mechanism too</h3>
+    <p>
+      A traditional approach for designing a cross-core marker-payload handoff places the "ready" flag on a different cache line than the payload. It involves two serialized cross-core communication operations: one for the check and the other for the fetch. Placing the flag and the payload in the same 64-byte cache line reduces the cost to one: the consumer's poll loop checks and fetches from the same cache line. Compared with a split line version on an uncontested pair, this design proved to be about 3× worse on a straight read/write cycle, and its p99 latency was 13× its p50 latency. Split design also stalled, which hurted the performance on the percentile-based challenge.
+    </p>
   </div>
 
   <div class="tip">
-    <h3>Build the whole thing in registers before publishing</h3>
-    <p>If a caller fills a struct field by field and then reads the whole struct back as one wide value to publish it,
-      that incurs a store-to-load forwarding stall on the hot path: the store isn't guranteed to be committed by the time the wide load wants it.
-      Assembling the value directly from values still within registers (using a vector-set intrinsic over the individual fields,
-      rather than a load over the memory) eliminates that stall entirely.
-      If the compiler tries to reorder that assembly wihtin the middle of a contincuous sequence of stores,
-      an empty inline-asm barrier suffices.</p>
+    <h3>Build the whole struct in registers before publishing it</h3>
+    <p>
+     If a function fills the structure field by field and then reads it back as a wide value to publish it, it incurs a store-to-load forwarding stall on the hot path: the store is not guaranteed to commit until the wide load reads it. Building the value directly from the values still in the registers (using a vector_set intrinsic on the individual fields instead of reading the structure memory) removes that stall. If the compiler attempts to reorder that construction in the middle of a continuous sequence of stores, an empty inline asm barrier will suffice.
+    </p>
   </div>
 
   <div class="tip">
-    <h3>Get runtime division out of anything that runs per element</h3>
-    <p>Zen 2's integer division is not pipelined and costs around 40&ndash;60 cycles per operation.
-      If the actual set of divisors a challenge can produce is small and bounded (a handful of named weight sets, say),
-      resolvable with mere rightward bit shifts, and fall back to a precomputed reciprocal or the general case, you will see
-      immense gains compared to a smattering of <code>idiv</code>s on the hot path.
+    <h3>Remove runtime divisions from any code that runs per element</h3>
+    <p>
+      The integer division in Zen 2 architecture is not pipelined and costs about 40–60 cycles per operation. If the set of divisors the challenge generates is small, bounded (a few named weight sets, for example), and resolvable with simple right shifts and fall back to either a precomputed reciprocal or general case, the gains would be enormous compared to the <code>idiv</code> instructions sprinkled here and there.
     </p>
   </div>
 
