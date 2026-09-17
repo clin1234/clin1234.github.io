@@ -383,39 +383,27 @@
 
   <div class="tip">
     <h3>Never trust a single run on a machine that throttles</h3>
-    <p>A one-shot comparison on a laptop that isn't thermally stable is closer to a coin flip than a measurement. Especially when switching between
-      energy-saving and performance modes.
-      My strongest example: a submission showed a <strong>+19.5% regression</strong> on a single run,
-      which looked exactly like the "landmine tuned to the wrong workload" pattern, and would have been a plausible reason to revert a real improvement. 
-      Re-run properly paired, every candidate submission timed round-robin-style within the same challenge, and after tries:
-      the same comparison came back <strong>&minus;9.3% better</strong>.
-      Two other apparent regressions in the same table vanished the same way.
-      My experience: treat anything under a 2&ndash;3% difference as noise unless it survived a paired benchmark.</p>
+    <p>
+      A one-run comparison on a computer that cannot be considered thermally stable is very close to flipping a coin. Especially, when you switch back and forth between power saving and performance modes. My best example: one of the submissions showed −19.5% regression on a single run, which looked like a textbook case of "tuned landmine to the wrong workload" and would have been a legitimate reason to undo a genuine improvement. Properly paired run for the same comparison resulted in +9.3%. Two other apparent regressions in the same table disappeared the same way. My rule: anything below 2-3% is likely noise, unless it survives paired benchmark.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Don't waste the setup phase</h3>
     <p>
-      Every allocation, every page fault, every table you can precompute belongs there instead of on the hot path.
-      In my case, my string-map solution moved its table allocation into a untimed constructor and the cycle count dropped by roughly half.</p>
-    <p>Beware of two caveats, though.
-      First, moving work the other way (say, hard-coding a struct size once its final size is known,
-      which sounds like it should only help) can cost more than it saves if that lands inside the timed region instead of before it.
-      Second,
-      "untimed" does not mean "free of a clock entirely."
-      An implementation that reconstructs an object and re-runs its setup on every one of a few hundred iterationsstill consumes wall-clock time limit on that submission,
-      even though none of it touches the score.
+Every allocation, every page fault, and everything you can pre-compute goes into setup, rather than hot path. In my particular case, my string-map solution moved its table allocation into untimed constructor and cut the cycle count in half.
+
+    </p>
+    <p>
+      There are two caveats here. First, sometimes moving some work into untimed phase could hurt more than help. For instance, hard-coding the struct size when you know the final size sounds like something which should only improve it, until you realize it happens inside timed region, rather than outside. Second, "untimed" does not equal "free of any clock". If you allocate some objects and initialize them by re-running setup routine hundreds times, you still consume wall clock, despite none of it touching the score.
     </p>
   </div>
 
   <div class="tip">
     <h3>A plausible solution is not a final result</h3>
-    <p>A specific,
-      reasoned prediction along the lines of "this should be faster because X" measured worse often enough that it's worth stating as a maxim:
-      computing a value with pure mask arithmetic so a branch shouldn't exist at all cost 7% over just leaving the (nearly-always-not-taken) branch in place.
-      Skipping a redundant memory write on a store-forwarding theory cost 15%. Splitting one fused loop into two cleaner passes cost more than the "wasted" work it was removing.
-      They seemed to be acceptable steps, but every one of them shipped only after a paired measurement said no,
-      and none of them would ne discovered by reasoning alone.</p>
+    <p>
+      If you have a concrete and specific explanation on how the certain algorithm is supposed to be better ("this is better because...") and it turned out to be wrong, measured worse often enough that it's worth to state it explicitly: computing a value by pure mask operations to ensure that there is no branch at all costs 7% compared to leaving nearly-always-not-taken branch in place. Skipping redundant memory write based on a theory about store forwarding cost 15%. Splitting fused loop in two passes costed more than extra work it saved. They all looked like acceptable steps, but every single one of them was shipped only after proper paired measurement said "no" and could not have been discovered by reasoning alone.
+      </p>
   </div>
 
   <div class="tip">
@@ -431,55 +419,48 @@
 
   <div class="tip">
     <h3>Pack the key before you pick the container</h3>
-    <p>Whenever a challenge caps key length at the width of CPU registers,
-      a "string map" is secretly an integer map, and the solution becomes: load the bytes, and mask to the real length.
-      No <code>strcmp</code>, no <code>std::string</code>, no byte loop within the hot path.</p>
-    <p>Masking to length prefers <code>BZHI</code> (one uop on Zen 2) rather than the more common <code>PEXT</code>/<code>PDEP</code>,
-      which are slow there even though they look like the "correct" bit-manipulation instructions. <code>BZHI</code> has one caveat:
-      its index saturates at the operand's own bit width. So asking a full 64-bit value with a 64-bit index silently clears the top bit:
-      invisible on a 6-byte key (index never exceeds 48), but returns a wrong-answer when key length >= 8 bytes. 
-      A small lookup table of precomputed masks sidesteps the saturation case entirely and costs nothing on the hot path.</p>
+    <p
+      In every challenge where the maximum key length is constrained by the width of CPU registers, "string map" is really an integer map and the solution is: load the bytes and mask them to obtain the real key length. There is no need for strcmp, std::string, or byte loop in the hot path.
+    </p>
+    <p>
+When masking to length, BZHI instruction (one micro-operation on Zen 2) is preferable to more common PEXT/PDEP instructions, which are quite slow there, despite looking like "correct" bit-manipulation operations. One caveat of BZHI: its index saturates at bit width of the operand itself. So requesting 64 bits length mask with 64 bit index would silently set the top bit to zero, which works fine for 6-byte keys (index never exceed 48), but returns a wrong answer for key lengths greater or equal 8 bytes. Lookup table with precomputed masks avoids the problem without any cost for hot path.
+
+    </p>
   </div>
 
   <div class="tip">
-    <h3>A per-op "don't optimize this away" barrier can hand back a value nobody wrote</h3>
-    <p>An recurring pattern: call your operation, then pass the result through a compiler barrier that's meant to stop the whole call from being optimized away as dead code.
-      For values that can't be stored in merely one register, GCC 14.2 with <code>-O2</code> can satisfy that barrier by writing the result to one stack slot and then,
-      read it back from a <em>different</em> stack slot that nothing wrote it to.
-      It compiles cleanly, it passes a casual correctness check, and it fails always:
-      moving the correctness check to <em>before</em> the barrier obscures it, which is why the bug can be shipped unnoticed.</p>
-    <p>One fix is to make the value exist in exactly one place the compiler has no freedom to re-derive: an inline-asm output register with memory clobbering,
-      not a per-field atomic load (which can re-appear).
+    <h3>Per-operation "don't optimize this away" barrier can give you back a value nobody wrote</h3>
+    <p>
+Recurring pattern: perform the operation and pass it to the compiler barrier which is supposed to prevent the entire call from being optimized as dead code. In case when the value is larger than can fit into just one register, GCC 14.2 with -O2 satisfies this barrier by writing the value into one stack slot and reading it from another stack slot which has never seen it. The code compiles cleanly, it passes casual correctness check and fails every single time: moving the check right before the barrier hides it, which allows shipping the bug without noticing.
+    </p>
+    <p>
+One of the fixes is to make sure the value exists exactly in one place compiler cannot possibly derive: in inline assembly output register with memory clobbering, not atomic loads per field.
 </p>
   </div>
 
   <div class="tip">
     <h3>Not every branch wants to disappear</h3>
     <p>
-      GCC will sometimes convert a branchless, masked value-select that you deliberatly wrote into a branch on the guarding condition
-      (which, if unpredictable, reintroduces the cost you want to remove).
-      
-      To mitigate, force an unconditional load and select the result with an all-ones/all-zeros mask,
-      which leaves the compiler nothing to branch on.
-      Confirm it if worked by disassembling the generated hot loop.</p>
-  </div>
-
-  <div class="tip">
-    <h3>A percentile metric can mask performance gains</h3>
-    <p>An optimization that clearly improves the <em>mean</em> case ( such as eliminating a division from a per-item computation) can move a percentile-scored benchmark by nothing,
-      if the workload's actual tail is dominated by a different operation entirely.
-      Always check which operation type owns the top 1% after a change that "should" help, rather than assuming a mean-shaped win automatically shows up in a tail-shaped score.</p>
-  </div>
-
-  <div class="tip">
-    <h3>For challenges involving only choosing build flags, learn which ones actually benefit</h3>
-    <p>First, flag names lie about scope more than you'd expect, at least on GCC.
-      <code>-funroll-loops</code> declines to unroll a loop whose trip count it can't determine statically,
-      while <code>-funroll-all-loops</code> ignores that restriction.
+GCC will sometimes turn your explicit branchless selection by a masked value into a conditional branch with the same condition (which, if unpredictably, re-introduces the cost you wanted to eliminate). To prevent it, use an unconditional load followed by selection of the result with all-ones or all-zeros mask, thus giving nothing to branch on. Verify that it worked by inspecting the disassembly of the hot loop.
     </p>
-    <p>Second, permission and mechanism are separate requirements, and you often need both.
-      Breaking a single serial floating-point accumulation chain into independent partial sums needs GCC's permission to reassociate floating-point math at all
-      (which needs two more flags to request) <em>and</em> a flag that actually hands each unrolled copy of the loop its own accumulator register:</p>
+  </div>
+
+  <div class="tip">
+    <h3>Percentile metric can mhide performance gains</h3>
+    <p>
+Optimization that clearly improves the mean case (such as eliminating division from item computation) can make no visible difference in percentile-scored benchmark, if the workload's actual tail is dominated by completely different operation. Make sure you check which operation type dominates the top 1% after a change which "should" improve it, rather than assuming the mean-shaped gain automatically appears in percentile-shaped metric.
+    </p>
+  </div>
+
+  <div class="tip">
+    <h3>For challenges involving only choosing build flags, know which ones actually help</h3>
+    <p>First, flag names lie about their scope more than you'd expect, at least for GCC.
+      <code>-funroll-loops</code> refuses to unroll a loop when it cannot determine its static trip count
+      while <code>-funroll-all-loops</code> ignores this restriction.
+    </p>
+    <p>
+    Second, permission and mechanism are different requirements and you might need both of them. Breaking a single serial floating point accumulation loop into independent partial sums requires GCC's permission to reorder the floating point operations at all (which, in turn, require two additional flags) and flag that actually gives each copy of the loop its own accumulator register:  
+    </p>
     <pre class="flags">-O2 -march=znver2 <span class="fl">-fassociative-math -fno-signed-zeros -fno-trapping-math</span>
 <span class="cm">                  # ^ the permission: reassociating FP math needs all three</span>
     <span class="fl">-funroll-all-loops -fvariable-expansion-in-unroller</span>
