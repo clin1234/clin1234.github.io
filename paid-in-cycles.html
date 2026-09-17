@@ -530,89 +530,69 @@ Small, reproducible deltas, such as those shown in the middle two rows (three di
   <div class="tip">
     <h3>Autovectorization is your only SIMD technique, and only one idiom reliably benefits from it</h3>
     <p>Because Rust challenges cannot include <code>unsafe</code> blocks, which discourages <code>core::arch</code> intrinsics,
-      every vectorization opportunity comes solely from LLVM.</p>
-    <p>In my experience, only one idiom reliably benefits from this: state kept in fixed-size arrays over a block,
-      with a simple <code>for i in 0..BLOCK</code> loop and the whole computation written out in the body.
-      Two silent killers, with the consequence being roughly five times slower the ectorized version:
-      any inner loop inside the block loop, even one with a small constant bound, and re-factoring the body into a helper function that takes a mutable reference as an out-parameter.
+      it leaves vectorization opportunities to LLVM alone.</p>
+    <p>
+      In my experience, only one idiom reliably uses this: a state held in a fixed-size array over a block, with a simple for i in 0..BLOCK loop and computation written completely inside its body. Silent killers: about five times slower vectorized variant: any inner loop inside block loop (even with a small constant bound), and refactoring the body to a helper function taking a mutable reference to it.
 </p>
   </div>
 
   <div class="tip">
-    <h3><code>Box&lt;[T; N]&gt;</code> plus a power-of-two mask elimates checking bounds</h3>
-    <p>With <code>get_unchecked</code> being unavailable, the pattern that reliably removes a bounds check without <code>unsafe</code> is a heap array with a compile-time,
-      power-of-two length (<code>Box&lt;[T; N]&gt;</code>, not <code>Vec&lt;T&gt;</code>, whose length can only be computed at run-time).
-      The compiler can then prove the index is always in range and drops the check.</p>
+    <h3><code>Box&lt;[T; N]&gt;</code> plus power-of-two mask elimates bounds checks</h3>
+    <p>With <code>get_unchecked</code> being off-limits, the reliable way to remove a bounds check without <code>unsafe</code> is a heap array with a compile-time,
+      power-of-two length (<code>Box&lt;[T; N]&gt;</code>, not <code>Vec&lt;T&gt;</code>, whose length is only computable at run-time).
+      The compiler can then prove the index is always within bounds and drops the check.</p>
     <p>
-      An index derived from internal bookkeeping (such as an allocated slot or a chain link) is safe to mask,
-      because it's guranteed to be in range due to your choices and the mask merely confirms the gurantee.
-      An index that arrives from outside your structure (such as an id, a symbol, anything caller-provided) can never be masked,
-      because it silently aliases an out-of-range value onto a live slot instead of rejecting it. In this case,
-      keep an explicit range check.
+The index calculated from internal bookkeeping (such as allocated slot, or a chain link) is safe to mask, as it guaranteed to be within bounds due to your choices and the mask only confirms the guarantee. An index that comes from outside your structure (such as an id, or a symbol, or whatever else provided by a caller) can never be masked, as it silently creates an alias to an out-of-bounds value instead of rejecting it. In this case, keep the explicit bounds check.
  </p>
   </div>
 
   <div class="tip">
     <h3>Make the conditional address, not the load</h3>
-    <p>A data-dependent length or bounds check that's resembles a coin flip should be left out of the hot path,
-      and the usual Rust idiom, <code>if len &gt;= N { wide read } else { narrow fallback }</code>, yields that branch.
-      Fix: make the pointer conditional instead of the control flow: try to obtain a reference to the wanted slice at the wanted offset,
-      fall back to a reference to a static zero buffer otherwise, then read the reference.
-      <code>rustc</code> and <code>LLVM</code> are free to lower the whole thing to conditional moves with the load itself folded into the selected one.</p>
+    <p>
+Data-dependent length or bounds check that looks like a coin toss should be off the hot path, and the usual Rust idiom, if len >= N { wide read } else { narrow fallback }, does exactly that. Fix: instead of making the control flow conditional, make the pointer conditional, trying to obtain the reference to the wanted slice at the wanted offset, falling back to the reference to a static zero buffer if failed, then reading the reference. rustc and LLVM are then free to compile it to conditional moves where the load itself becomes a part of the selected one.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Two seemingly equivalent snippets can compile to different code</h3>
-    <p> <code>Some(v).filter(|_| cond)</code> compiled branchless while both <code>cond.then_some(v)</code>
-      and the explicit <code>if cond { Some(v) } else { None }</code> compiled to a real jump.
+    <p> <code>Some(v).filter(|_| cond)</code> compiled branchless, while both <code>cond.then_some(v)</code>
+      and the explicit <code>if cond { Some(v) } else { None }</code> compiled to an actual jump.
       The only reliable source of truth is the generated assembly.</p>
   </div>
 
   <div class="tip">
     <h3>"Not timed" doesn't mean "free of a clock"</h3>
-    <p>In many challenges, benchmark harnesses construct a fresh instance of your solution and call its setup method inside the overall iteration loop,
-      hundreds of times, even though only a small inner region of each iteration is what gets timed.
-      But it still consumes harness's overall wall-clock timeout limit. In one challenge, a parameter search over several hundred candidates, run once per iteration,
-      consumed more than half of its 60s time limit; it performed worse than setting a fixed constant.
+    <p>
+      Many challenges have benchmark harness that builds a new instance of your solution and calls its setup method inside the main iteration loop, hundreds of times, even though only a small region of each iteration is actually timed. But it still takes time from the overall wall-clock timeout limit. In one particular challenge, an exhaustive parameter search over several hundred candidates, run once per iteration, used more than half of its 60s timeout limit and performed worse than setting a fixed constant.
 </p>
   </div>
 
   <div class="tip">
-    <h3>When the bottleneck is integer ports, not memory, trading a load instruction wins</h3>
-    <p>Assuming that a large table always implies "this is a memory problem" is wrong: 
-      check the actual port pressure before acting on it. On one string-map lookup,
-      a cycle model showed four integer ALU ports fully saturated while the address-generation ports sat two-thirds of its runtime idle:
-      the former contains a ALU-bound hot path disguised as a memory-bound problem.
-      Once that was visible, the optimal solution deviated from intuition:
-      replacing an integer multiply (three ALU instructions) with a small table lookup (one ALU instruction plus one memory access)
-      was a net win specifically because it shifted work from saturated to idle ports,
-      even though it technically added a memory access to a table.
-</p>
+    <h3>If the bottleneck is integer ports, not memory, trading a load instruction wins</h3>
+    <p>
+    Assuming that a big table always means "this is a memory problem" is incorrect: analyze the actual port pressure before acting on it. On one string map lookup, the cycle model revealed four integer ALU ports being fully saturated, while the address generation ports were only 2/3 busy throughout the whole run: there was a ALU-bound hot path disguised as a memory-bound problem. Once that became clear, the optimal solution went against common sense: substituting an integer multiply (three ALU instructions) with a small table lookup (one ALU instruction and one memory access) turned out to be a net win specifically because it shifted work from saturated to idle ports, even though it introduced one additional memory access to the table.  
+    </p>
   </div>
 
   <div class="tip">
-    <h3>Duplicate keys show performance degredation correctness issues</h3>
-    <p>An append-only structure that never overwrites a repeated key looks correct (the first inserted value is still findable),
-      until the key has hundreds of duplicates and future lookups for it has to walk the entire accumulated chain.
-      Overwriting rather than appending fixed correctness and lookup regressions.</p>
+    <h3>Duplicate keys show performance degredation and correctness issues</h3>
+    <p>
+      An append-only structure that never overwrites a duplicate key looks good (the first inserted value will be still found), until the key has hundreds of duplicates and future lookups for it has to go through the entire accumulated chain. Overwriting instead of appending solved both correctness and performance problems.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Fold the length in whenever fixed windows over a variable key overlap</h3>
-    <p>Covering a variable-length key with a small number of fixed-width reads, such as reading the first eight bytes and the last eight bytes, is a
-      branchless way to read a bounded key without a length-dependent loop. Also, 
-      two different short keys can produce byte-for-byte identical windows when looking at a few fixed positions.
-      Folding the actual length into a data structure derived from those windows (a table-indexed salt works well,
-      since its address depends only on a well-known value) restores the distinction for free,
-      without adding anything to the dependency chain those byte loads are on.</p>
+    <p>
+      Reading a bounded key through a small number of fixed-width reads, such as the first and last 8 bytes, is a branchless way to read the bounded key without length-dependent loop. Also, two different short keys can generate byte-by-byte identical windows when viewed at some fixed positions. Folding the actual length into a data structure calculated from those windows (table indexed salt works well here, as its address depends only on a well-known value) gives you a free restoration of the uniqueness, without introducing anything into the dependency chain of those byte loads.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Invalidate only the half of a cached result that could have changed</h3>
-    <p>When a single update only affects one of two derived results (such as an update to one leg of a synthetic instrument feeding exactly one of an implied bid or an implied ask)
-      cache both results separately and invalidate only the one the update actually touches.
-      Recomputing both "to be safe" on every write throws away a two-to-four-times performance gain for no additional correctness,
-      since the untouched half is still valid.</p>
+    <p>
+      If an update affects only one of two calculated results (for example, an update to one leg of a synthetic instrument affects only one of an implied bid or an implied ask), cache both results separately and invalidate only the one affected. Recalculating both "to be sure" after every write discards a two-to-four times speed-up for nothing, as the other half stays valid anyway.
+    </p>
   </div>
 
   <div class="divider"></div>
