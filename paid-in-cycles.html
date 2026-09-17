@@ -305,80 +305,71 @@
   <p class="section-sub">Blindly trusting wrong measurements</p>
 
   <div class="tip">
-    <h3>Your device and the validation server's may not be completely identical: plan for it</h3>
-    <p>The obvious move, once you can build locally, is <code>-march=znver2</code> (server uses Zen 2 CPU).</p>
-    <p>Not passing this flag will cause confusion due to disparate cycle counts from your device to the validation server. For example, when I designed a FIX-message parser, two of my solutions
-      measured 16% apart on the laptop, and the "worse" one (storing the delimiter to a stack array and reloading it through different index registers) won locally because Alder Lake, my laptop CPU's microarchitecture,
-      forwards store-to-load traffic cheaply. It <em>lost</em> on the validation server by 3%, because Zen 2's store forwarding is slower and its memory disambiguation weaker.</p>
-    <p>Lesson: local timing is a regression guard, not an optimization guide. It's valid for algorithmic changes, such as fewer instructions, fewer allocations, less memory touched.
-      It's not valid for microarchitectural decisions: branchless vs. branch, store/reload vs. register residency, dependency-chain shape, unrolling.
-      For those, read the generated assembly, and use <code>llvm-mca</code>. </p>
+    <h3>Your device and the validation server's may be different</h3>
+    <p>The obvious next step, once you can build locally, is <code>-march=znver2</code> (server uses Zen 2 CPU).</p>
+    <p>
+      If you won't pass this flag, expect the results to be confusing due to differences in cycle counts on your hardware and on the validation server. For example, when working on FIX-message parser implementation, two of my solutions differed by 16% locally, and the "worse" solution (using a stack array to store the delimiter and then reloading it through different index registers) won locally, because Alder Lake architecture (the one used in my laptop) forward stores-to-load operations efficiently, but lost by 3% on the server because Zen 2 is worse at this operation.
+    </p>
+    <p>
+      The takeaway from this experience is that the local timing is only useful for regression guarding. This method is valid for algorithmic improvements (e.g., less instructions, allocations, memory accesses), but not for microarchitectures-related improvements. For that, you'd have to read the generated assembly and use the llvm-mca.
+    </p>
   </div>
 
   
   <div class="tip">
     <h3>Blindly porting a design from another language does not gurantee success</h3>
-    <p>Whenever a challenge exists in both a C++ and a Rust version, don't assume the two harnesses agree on what a field even means.
-      One pair here diverged because the C++ harness resets an internal counter before every operation so a venue always hands back the exact id its generator reserved,
-      whereas a straight Rust port of the C++ version dropped that call while repurposing the same argument slot for something else, 
-      so an id that looks like "our own order" in the Rust version can name an unrelated one.
+    <p>
+      When both C++ and Rust versions of a challenge exist, never assume that both of them use the same definitions of fields used. In this particular challenge suite, one pair of implementations differed because the C++ harness reset an internal counter before each operation to make a venue return the exact id the generator assigned, while a naive port of the C++ version of the challenge lost this call to repurpose the corresponding argument.
 </p>
   </div>
 
   <div class="tip">
-    <h3>Calibrate you believe a single benchmark result</h3>
-    <p>The wall-clock instruction (<code>RDTSC</code> here) doesn't necessarily tick at the core's actual frequency.
-      On my laptop, the counter ran at a fixed 2.803&nbsp;GHz while the core executed around 4.3&ndash;4.5&nbsp;GHz, so every locally reported cycle count was quietly <strong>1.56&times; too small</strong>.
+    <h3>Sometimes, calibrate on a single benchmark result</h3>
+    <p>
+      The wall-clock instruction (RDTSC in my case) does not necessarily tick in the core's frequency. In my case, the counter was ticking at 2.803 GHz, while the core frequency was 4.3-4.5 GHz. Thus, all my locally reported cycle counts were 1.56× smaller than in reality.
       </p>
-    <p>You can measure such ratio directly: time a long chain of <em>dependent</em> multiplies (<code>imul %r,%r</code> chained, three cycles each in any modern core) with the harness's own clock read, and divide.
-      Don't use a dependent add as the anchor: on at least one core (at least for me), it runs faster than the dependency should allow and gives a nonsense ratio.
+    <p>
+This ratio can be measured by time-based benchmarking: time a chain of dependent multiplies (<code>imul %r, %r</code>) chained (three cycles each in any modern core) using the harness's clock reading, and divide. Do not use dependent add instructions as a benchmark basis: on at least one CPU core, it will run faster than the dependency should allow.
       </p>
-    <p>Correcting this solved a long-running mystery: during a parsing challenge, a parser that was roughly 2&times; slower on the certified server turned out to be running at almost exactly the predicted speed: 415&ndash;447 local ticks &times; 1.558 landed within a rounding error of the actual certified score.
-      </p>
+    <p>
+
+By correcting this, I finally solved the old mystery: in one particular challenge where a parser performed 2× worse on certified server, I found out that it was almost exactly the expected speed: 415-447 cycles × 1.558 = the actual certified result (within rounding errors).      </p>
   </div>
 
   <div class="tip">
-    <h3>Widen the cycle model's dispatch width, or it will hide your best wins</h3>
-    <p>If you reach for a static cycle-accuracy tool for the target microarchitecture, such as <code>llvm-mca</code>,
-      check its default dispatch width against the target chip's. The Zen 2 model within the tool assumes 4-wide dispatch;
-      the real Zen 2 CPU from the server retires up to six macro-ops/cycle. With the narrower default,
-      the model saturates on dispatch and hides latency-chain improvements: a genuine 31% win (3.006 &rarr; 2.064 cycles per iteration, confirmed through disassembly)
-      reported as a mere 6% one under the default width. Pass the wider dispatch explicitly whenever you're testing against the CPU;
-      trust the narrow default only as a floor.</p>
+    <h3>Widen the cycle model's dispatch width, or it will hide your best optimizations</h3>
+    <p>
+    In case you try a static cycle-accurate model for your target microarchitecture, such as llvm-mca, make sure that its default dispatch width is correct. The model of Zen 2 microarchitecture included in the tool assumes 4-wide dispatch, while the server uses 6-macro-ops-per-cycle CPU. The default dispatch width is too narrow and will saturate dispatch queue and hide any latency-chain improvements, such as a 31% improvement (from 3.006 to 2.064 cycles per loop, verified via disassembly), reported as a mere 6% improvement. Whenever you're benchmarking against a CPU, pass the wider dispatch explicitly; use the default width as a floor only.  
+    </p>
   </div>
 
   <div class="tip">
-    <h3>Don't treat certified submissions as merely rolling the same die multiple times</h3>
+    <h3>Don't treat certified submissions as rolling the same die multiple times</h3>
     <p>To quote the site's admin:</p>
     <blockquote>"The public benchmark you run locally and the private benchmark used for scoring on the server are completely different programs. They share the same challenge interface but measure different things under different conditions&nbsp;&hellip; it uses a different workload, different data, and different measurement methodology."<cite>HFT University forum, on a local/certified score mismatch</cite></blockquote>
     <p>
-      Any implementation whose <em>cost</em> depends on inputs staying inside the public generator's range is a landmine, such as
-      a fast path gated to a parameter band, a series expansion that's only valid there, or a capacity overfitted to the public sample.
-      For me, my implementation of an implied-volatility solver relied on a moneyness window and a bounded rate term; everything outside fell to a roughly 2,500-cycle bisection.
-      On paper, the fast path was optimal. However, it simply never ran on certified data, and the score came back 16.6&times; worse than the local number.</p>
-    <p>Lesson: run your solution on a deliberately wide, off-distribution input and compare the <em>throughput ratio</em> against the shipped workload,
-      not absolute time. If the ratio collapses once you're treding off the well-traveled path, you've defused the above landmine.</p>
+     Any implementation which depends on its inputs being within public generator's range is a trap, such as a fast path gated to a parameter band, a series expansion that is only valid there, or an overfitted capacity. In my case, the implementation of the implied-volatility solver I made relied on a moneyness window and bounded rate term; anything outside falls to a rough 2,500-cycle bisection algorithm. On paper, the fast path was optimal. However, it simply never fired on the certified data, and my certified score became 16.6× worse than the local one.
+      </p>
+    <p>
+      The lesson is simple: run your solution on a wide-range, off-distribution input and compare the ratio between the throughputs with the shipped workload, not the absolute time. If the ratio crashes, then your solution was triggered by the above trap.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Read the scoring formula as a spec</h3>
     <p>Scoring tiers differ per challenge.
-      Some challenges score a mean over a full run; some score the 99th percentile of latencies. 
-      At least one challenge doubles that percentile, because the harness's reported per-iteration operation count and the divisor against don't match,
-      so a stated gold threshold of, say, 500 cycles actually requires a p99 of 250.</p>
-    <p>A percentile metric changes what's worth fixing, too.
-      The average operation is irrelevant and so is the single worst one; what matters the most is which operation <em>type</em> contributes to the slowest 1%.
-      That answer varies as you ierate: on one scheduler it shifted three times across a single project, from the "fire an event" path to a memory-access path to an "insert" path,
-      so the overall approach isn't "measure once and optimize," it's "re-measure which type owns the tail after every change,"
-      because the next bottleneck is mostly like elsewhere in your solution.</p>
+Scoring formula differs depending on the challenge. Some challenges use mean over the entire run as a score; others use the 99th percentile of latencies. At least one challenge double that percentile, as the reported per-operation count in the harness and divisor against it do not match, so if the gold score threshold is, say, 500 cycles, then the actual p99 is 250.
+    </p>
+    <p>
+      Also, a percentile metric makes optimization priorities different. Average operation is irrelevant, and so is the single worst one; what really matters is what operation type is the slowest 1%. This varies from iteration to iteration: in one scheduler implementation, it changed three times within one project, from the "fire an event" path to a memory-access path to the "insert" path, so the right way to deal with this challenge is not "measure once and optimize", but rather "re-measure which type owns the tail after each iteration", as the next bottleneck is most likely somewhere in your solution.
+    </p>
   </div>
 
   <div class="tip">
     <h3>Know the tick size</h3>
-    <p>The certified runner's CPU clock ticks in coarse steps of about 31 cycles,
-      so published scores can only be in multiples of 62.
-      Save the sub-62 cycle micro-optimizations for changes you can already justify on other grounds,
-      and don't consider "the score didn't move" as "the change didn't work" without checking whether it could have moved in the first place.</p>
+    <p>
+      Certified runner's CPU clock ticks in coarse steps of about 31 cycles, so published scores can only be in multiples of 62. Save the sub-62 cycle micro-optimizations for changes you can justify by other means, and do not assume that "the score didn't move" equals to "the change didn't work".
+    </p>
   </div>
 
   <div class="tip">
