@@ -309,7 +309,7 @@
 
   <div class="tip">
     <h3>Your device and the validation server's may not be completely identical: plan for it</h3>
-    <p>The obvious move, once you can build locally, is <code>-march=znver2</code> (server uses Zen 2 CPU)./p>
+    <p>The obvious move, once you can build locally, is <code>-march=znver2</code> (server uses Zen 2 CPU).</p>
     <p>Not passing this flag will cause confusion due to disparate cycle counts from your device to the validation server. For example, when I designed a FIX-message parser, two of my solutions
       measured 16% apart on the laptop, and the "worse" one (storing the delimiter to a stack array and reloading it through different index registers) won locally because Alder Lake, my laptop CPU's microarchitecture,
       forwards store-to-load traffic cheaply. It <em>lost</em> on the validation server by 3%, because Zen 2's store forwarding is slower and its memory disambiguation weaker.</p>
