@@ -10,6 +10,191 @@
 
 # Utterances of a Cynic
 
+## CppCon 2026: Tying Up Loose Threads
+
+My 1st time attending CppCon.
+
+That sentence still feels a bit strange to write.
+
+I had watched CppCon talks, illuminating talks whose names also authored in-depth blog posts, and nurtured and taught a generation on YouTube. All C++ projects, prominent and hobbyist, that somehow end up teaching you more than you realized.
+
+And then, suddenly, I was in Denver.
+
+Not watching CppCon.
+
+Actually attending it.
+
+And, slightly more surreal still, I was also there to give a talk.
+
+### There Are Too Many C++ Talks
+
+My first discovery was that attending CppCon's main talks is not quite the same thing as watching them on YouTube.
+
+You look at the schedule and see a talk about branch prediction. Another about memory. Another about benchmarking. Another about C++26. Another about reflection. Another that sounds so interesting that you immediately want to clone yourself.
+
+Marco Barbone joked about the obvious solution: `fork()` yourself and attend all the parallel tracks. He did not, in fact, recommend this particular conference optimization.
+
+Funnily enough, Matt Godbolt described spending more time than ever in the "hallway track": the unofficial track where instead of sitting down for a presentation, you end up standing around talking to interesting people. His reasoning was difficult to argue with: the talks will eventually appear online, but the experience of conversing within the hallway is much harder to reproduce later.
+
+I quickly discovered why.
+
+There is something wonderful about seeing a name you've previously encountered only on a screen and then realizing that the person is just... there.
+
+Walking around.
+
+Getting coffee.
+
+Talking about C++.
+
+Being a person, instead of being imagined as an "iterant sage" (I'll explain the term in due time).
+
+That was one of the strangest and nicest parts of the week.
+
+### The Hallway Track Is Real
+
+James Lim described CppCon as being densely populated with talent, passion, and warmth. He also mentioned an elevator ride that turned into a conversation about one of his projects and new ideas for it.
+
+That sounds almost too convenient until you experience it yourself.
+
+There's no need to induce networking opportunities at a conference like this. People already have something they want to talk about.
+
+A talk just finished? Talk about it.
+
+Someone has a project you recognize? Ask about it.
+
+You're both standing in the same hallway? Apparently that's enough.
+
+Vishnu Gopinath had a similar observation: CppCon is much more than its talks. It is the people, the random hallway discussions, the ideas you pick up from someone you have just met, and the slightly unreasonable amount of C++ that everyone seems perfectly happy to discuss.
+
+I think that last part may be the official theme of the conference: there is simply an extraordinary amount of C++.
+
+### And Then There Was the Mountain
+
+The conference was held at Gaylord Rockies, with the Rocky Mountains providing a slightly unreasonable backdrop for a conference about compilers, caches, allocators, and undefined behavior.
+
+Sandor Dargo's trip report captured some of that contrast nicely: spacious surroundings, the mountains outside, and the opportunity to explore Denver between conference activities. He visited the Forney Museum of Transportation and the Clyfford Still Museum, despite not usually being particularly interested in modern art.
+
+It made the whole thing feel slightly unreal.
+
+In the best possible way.
+
+### The Moment CppCon Stopped Being a List of Talks
+
+At some point, the conference stopped being a schedule.
+
+It became a collection of questions (and I did ask plenty), such as:
+
+* How much does an abstraction really cost?
+* What does the CPU actually do?
+* Where is the data?
+* How do you benchmark something without disturbing the thing you're measuring?
+* What happens when you want to update a running binary?
+* What does C++26 make possible?
+* How far can reflection go?
+* What happens when AI writes the code?
+* Can the language continue to thrive within WG21?
+
+And, for me:
+
+**What happens when Python no longer has the GIL?**
+
+### Tying Up Loose Threads
+
+My talk was [Tying Up Loose Threads: Making Your Project No-GIL Ready](https://cppcon2026.sched.com/event/2RT6m/tying-up-loose-threads-making-your-project-no-gil-ready).
+
+The basic idea was that removing the GIL is not simply ripping out one giant lock: CPython's free-threaded build changes the allocator, reference counting, container synchronization, and C API, exposing assumptions that extension code may previously have relied on implicitly.
+
+The deeper I looked, the more surprising those changes became. The free-threaded build uses mimalloc with delayed reclamation and quiescent-state mechanisms, while reference counting gains separate local and shared state so that different threads can participate safely. Containers and borrowed references bring another set of concurrency concerns: operations that once looked harmless can require explicit synchronization, and a borrowed reference no longer carries the same implicit protection when another thread can modify its container.
+
+Fortunately, the ecosystem already provides practical migration paths. `pybind11` and PyO3 can declare GIL-independent modules; global state can move toward thread-local storage; Cython and module initialization have free-threading support; and CI can build against Python 3.14t, disable the GIL, and use ThreadSanitizer and AddressSanitizer to uncover the bugs hidden by the old assumptions.
+
+### Meanwhile, C++ Was Busy Being C++
+
+Of course, I did not come to CppCon only to talk about Python's interop capabilities with C++. There were talks about branch prediction, object residency, benchmarking, practical algorithms, memory systems, and C++26.
+
+Roman Bansal highlighted another cluster of ideas particularly well: memory as performance, increasingly explicit control over caches and RAM, measuring performance without distorting the measurement, and techniques for updating running binaries without restarting them.
+
+As I continued to listen on his talk, I found myself repeatedly coming back to the same thought: 
+
+> Higher-level abstractions can improve clarity and maintainability, but some abstraction techniques really do introduce runtime costs. The important thing is not to reject abstraction reflexively, but to understand where the costs matter and where they do not.
+
+That felt surprisingly connected to the no-GIL work, as in both cases, the interesting engineering questions start when you stop accepting the surface-level justifications.
+
+### Then Someone Made a Duck
+
+One of the most delightful moments of the conference was Ryan Keane's work with C++26 reflection. Sidenote: I'll still affectionately call him "the Renassler whiz kid with the yee-ass haircut".
+
+His `rjk::duck` library explores how unrelated types can participate in a common interface using reflection, and his talk on synthesizing VTables with C++26 reflection earned a standing ovation. He also won Best Poster for the project.
+
+I love moments like that at conferences.
+
+You see something as marvelous and ingenious as thus, and your first reaction shifts from:
+
+> "I should probably read the paper."
+
+to:
+
+> "Wait. You can do that?"
+
+That happened more than once during the week.
+
+Sometimes the exciting thing was a language feature.
+
+Sometimes it was a memory-management technique.
+
+Sometimes it was an absurdly fast emulator.
+
+Sometimes it was a clever benchmark.
+
+And sometimes it was simply watching someone explain a problem they had clearly spent a ridiculous amount of time thinking about. Seriously, check out [his write-up](https://ryanjk5.github.io/posts/rjk-duck/).
+
+### Dozens of Talks. One Me.
+
+Another maxim that afflicts every technical conference attendee: you won't see and hear everything.
+
+There were talks about benchmarking, memory hierarchies from caches through NUMA and CXL, Python JITs, language panels, and lightning talks: all the while the hallway track was humming along.
+
+A 6000 FPS Game Boy emulator, a closing systems-engineering talk, posters, sponsor events, and countless conversations were all competing for the same finite amount of time.
+
+And that brought me back to one of the strangest feelings of being there for the first time.
+
+### The Slightly Terrifying Part: Giving the Talk
+
+Preparing the slides was one thing.
+
+Seeing the talk on the actual conference schedule was another.
+
+Suddenly the title was no longer something in my presentation file.
+
+The dread was real: the room that I presented could seat roughly 40 peeps at best, and it was only slightly over half-full.
+
+They could ask probing questions, disagree, or could have already studied the CPython implementation much more than I had.
+
+Admittedly, I wasn't able to answer all of the attendees' questions in a satisfactory way. However, the payoff of enlightening the avidly-curious listeners was still worth the jitters.
+
+### Tying Up Loose Threads
+
+The no-GIL project currently has plenty of momentum. The slides I presented noted that 61% of the most popular PyPI wheels were reported as free-threaded compatible, alongside the growing collection of Python documentation and tooling for supporting free-threaded extensions.
+
+But the most useful lesson for me was not a percentage.
+
+It was a way of thinking. I think these maxims encapsulate the gist of all the wonderful talks presented at this year's CppCon:
+
+* When an old assumption disappears, find everything that depended on it.
+* When an abstraction hides something important, learn what is underneath.
+* When a benchmark says something surprising, investigate the measurement.
+* When an AI gives you code, ask it questions.
+* When a conference presents six fascinating talks at once, accept that you are only one human being.
+* When you meet someone whose work you've admired from afar, say hello.
+
+You never know where the conversation will go.
+
+### Just Before Leaving Denver
+
+Normally, I would have spent my last night at Gaylord Rockies lounging around its numerous (and expensive) restaurants and finishing my other projects. However, an auspicious moment arrived when Jon Kalb, the convenor of the entire conference, permitted me to attend Fidor Pikus' 2-day class on C++'s parallel execution policies, thread safetiness, atomics, C++ memory ordering, how to prevent false sharing, and designing lock-free concurrent data structures. Normally attending required paying a very huge registration free, so I am still grateful for being able to hear from the greybeard himself for free!
+
+Last modified 9/29/2026
+
 ## 1st week of using Claude Pro
 
 Thanks to the generosity of the organizers of PyTexas 2026, I won a 3-month Claude Pro subscription as a prize!
