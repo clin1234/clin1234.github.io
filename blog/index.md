@@ -108,6 +108,8 @@ The deeper I looked, the more surprising those changes became. The free-threaded
 
 Fortunately, the ecosystem already provides practical migration paths. `pybind11` and PyO3 can declare GIL-independent modules; global state can move toward thread-local storage; Cython and module initialization have free-threading support; and CI can build against Python 3.14t, disable the GIL, and use ThreadSanitizer and AddressSanitizer to uncover the bugs hidden by the old assumptions.
 
+Slides: https://github.com/CppCon/CppCon2026/blob/main/Presentations/Tying_Up_Loose_Threads.pptx
+
 ### Meanwhile, C++ Was Busy Being C++
 
 Of course, I did not come to CppCon only to talk about Python's interop capabilities with C++. There were talks about branch prediction, object residency, benchmarking, practical algorithms, memory systems, and C++26.
@@ -119,6 +121,13 @@ As I continued to listen on his talk, I found myself repeatedly coming back to t
 > Higher-level abstractions can improve clarity and maintainability, but some abstraction techniques really do introduce runtime costs. The important thing is not to reject abstraction reflexively, but to understand where the costs matter and where they do not.
 
 That felt surprisingly connected to the no-GIL work, as in both cases, the interesting engineering questions start when you stop accepting the surface-level justifications.
+
+Oh, and during one [particular keynote session](https://youtu.be/41USGJaGsAo), the Q&A session got spicy 🌶️. John Kalos grilled Stroustrup on why [contracts](https://en.cppreference.com/cpp/language/contracts) and profiles could not be merged together in C++26, claiming that they can coexist. He also compared this watershed moment to C++11's formalization of the memory model and barring copy-on-write strings, and subsequent ABI breakages. His Qs touched on the following:
+
+1. Difference between erroneous behavior (defined in standard) and profiles defining UB: Stroustrup stated that erroneous behavior removes a major source of UB, but also error-prone and implementation-defined, so can be sidestepped with the initialization profile
+2. How Profiles handle integer overflow, comparison to prior approaches (saturation add and wrap around), and frustrating breakages and incompatbilties due to redefining UB as intended behavior: Stroustrup made a cop-out, claiming he authored a paper touching on this issue, but needed another year to elaborate.
+
+BTW, my remark on MSVC not supporting profiles, with him implying absolute focus on AI above C++26 features elicited much laughter. 😁
 
 ### Then Someone Made a Duck
 
@@ -192,6 +201,10 @@ You never know where the conversation will go.
 ### Just Before Leaving Denver
 
 Normally, I would have spent my last night at Gaylord Rockies lounging around its numerous (and expensive) restaurants and finishing my other projects. However, an auspicious moment arrived when Jon Kalb, the convenor of the entire conference, permitted me to attend Fidor Pikus' 2-day class on C++'s parallel execution policies, thread safetiness, atomics, C++ memory ordering, how to prevent false sharing, and designing lock-free concurrent data structures. Normally attending required paying a very huge registration free, so I am still grateful for being able to hear from the greybeard himself for free!
+
+PS: "iterant sage"
+
+> During lightning talks, among their attendees were none other than Jason Turner (C++ Weekly) and  Matt Godbolt (Compiler Explorer). I could contain my excitement of meeting these two luminaries (among many others) of the C++ community. The former brought up wanting to pack up and move elsewhere; I joked that doing so befits calling them "iterant sages," who dispense invaluable C++ techniques across cities in exchange for room and board.
 
 Last modified 9/29/2026
 
