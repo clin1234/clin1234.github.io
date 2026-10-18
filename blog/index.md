@@ -10,6 +10,69 @@
 
 # Utterances of a Cynic
 
+## My first BazelCon: build graphs, bad Wi-Fi, and stolen cards
+
+I arrived in Amsterdam for [BazelCon 2026](https://events.linuxfoundation.org/bazelcon/) with plenty to learn about Bazel. Then I got robbed on the metro the day before the conference. Without my cards, I couldn't pay for my reservation at Bastion Amstel, so I ended up using a virtual card to book a night in a hostel. Not the introduction to Amsterdam I'd hoped for.
+
+Fortunately, the next three days gave me much better things to think about.
+
+### Day 1: learning by breaking things
+
+The training day began with a change of plan. The instructor for [Build Without the Bytes: High-Velocity Image Composition at Scale](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1292480) didn't arrive, and our session became a series of breakout discussions about using Bazel. It was an improvised start to a day that would include quite a bit of improvisation.
+
+Antonio Di Stefano and Yannic Bonenberger's [Advanced Bazel: Rules Authoring, Performance Tuning and Remote Execution](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1293066) gave me plenty to work through. The [workshop repository](https://github.com/EngFlow-Academy/bazelcon-2026-advanced-bazel-workshop) includes exercises on test sharding, validation actions, and tree artifacts. We also had an unscheduled exercise in patience: downloading Bazel over congested conference Wi-Fi. Occasional differences between the live presentation and the repository kept us on our toes, too. The presenters stayed cheerful even as time ran out.
+
+The mutation-testing example helped several ideas click for me. Putting every mutation into one test action means running them sequentially on one worker, with coarse caching. Splitting the work into separate actions gives Bazel more opportunities to parallelize and reuse results. The special `\_validation` output group makes those checks part of the build without requiring users to request a custom output group explicitly. The [workshop slides](https://github.com/EngFlow-Academy/bazelcon-2026-advanced-bazel-workshop/blob/main/slides/build_deck.py) walk through that progression.
+
+Tree artifacts were another useful discovery: directory outputs whose contents may only become known during execution. [`ctx.actions.map\_directory`](https://bazel.build/rules/lib/builtins/actions#map_directory) lets a rule create actions based on the files in those directories once they are available. In this exercise, that meant generating separate patching and checking actions for the discovered mutations. I could finally see how a build graph could accommodate work whose exact shape wasn't known upfront.
+
+Jason Bedard's afternoon workshop changed, too. The [schedule](https://events.linuxfoundation.org/bazelcon/program/schedule/) lists [Build File Generation Using AXL](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1361063) as the replacement for [Extending Bazel with Starlark: Custom Commands and Code Generation](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1293142). We explored [Aspect Gazelle](https://github.com/aspect-build/aspect-gazelle), including its prebuilt runner. Avoiding a local build of Gazelle and its transitive toolchains sounded especially appealing after the morning's downloads.
+
+The Jest example made BUILD-file generation feel approachable: an extension could add or remove test targets as the source tree changed. Lazy indexing and restricting regeneration to selected directories also caught my attention. These may be familiar ideas to experienced Gazelle users, but I was seeing them for the first time.
+
+[Orion](https://github.com/aspect-build/aspect-gazelle/tree/main/language/orion) lets you write those generator extensions in Starlark through AXL, instead of implementing them in Go. Its callbacks divide the work into stages: `prepare` identifies sources and queries, while `declare` uses the results to define targets. That's a distinction I had to straighten out in my notes: we're writing the generator in Starlark, not inventing a replacement language for BUILD files. The session eventually became a group brainstorming discussion, which suited the improvised format.
+
+Jorge Acosta and Ricard Sole Casas closed my training day with [How Fast Should/Can My Build Be? A Journey to Understand Build Optimization](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1293145). Their [maze project](https://github.com/Giorgiux/bazelcon-maze) uses a small browser game and its build graph as an optimization exercise. It made the limits of throwing more compute at a problem quite tangible. A long chain of dependent actions still has to run in order; adding workers won't shorten that chain. Local development and CI also have different starting conditions, so the same optimization won't necessarily help both.
+
+We looked at whether execution or overhead dominated a build, and at tools for finding where the time went. The presenters' enthusiasm for [`--disk\_cache`](https://bazel.build/remote/caching#disk-cache) was infectious. Reusing action outputs across local builds sounds rather magical when you're new to it. I also discovered that Bazel's [JSON trace profiles](https://bazel.build/advanced/performance/json-trace-profile) can be opened in [Perfetto](https://ui.perfetto.dev/). Meanwhile, the Wi-Fi was still making its own contribution to our wall-clock measurements.
+
+### Day 2: more acronyms, fewer possessions
+
+Some good news: I filed a police report and received a written response to help with replacing my stolen ID and cards. A small consolation, but a useful one.
+
+The main conference brought community updates, sponsor booths, and discussion of agentic development workflows. Bazel 10 was also on the agenda, with [10.0.0rc1 already released before the conference](https://github.com/bazelbuild/bazel/releases). Between the talks and conversations, my list of unfamiliar projects kept growing.
+
+Mattias Jansson's [One Content-Addressed Store, Zero Full Clones: Backing Bazel's Cache and Remote Execution with Lore](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1270075) introduced me to [Lore](https://github.com/EpicGames/lore), Epic Games' content-addressed version-control system. The talk explored using one store for source data and build artifacts, with workers fetching inputs as needed. I'd initially scribbled down something like "Git plus a build cache," but Lore is its own version-control system. Sharing storage across those uses was the idea that interested me.
+
+Tyler French and Benjamin Ingberg's [Content-Defined Chunking for Bazel](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1224147) approached reuse at a smaller scale. [Content-defined chunking](https://www.buildbuddy.io/blog/content-defined-chunking/) splits large files into chunks whose boundaries depend on their contents. Matching chunks can be reused, so a slightly changed binary needn't be uploaded or downloaded in full. This is chunk reuse, rather than storing a byte-by-byte diff against an earlier object file. The potential reduction in network traffic made immediate sense, especially after the previous day's downloads.
+
+Tamir Duberstein's [Type-checking Starlark without waiting for Bazel](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1263217) answered a question I'd been wondering about: if Starlark looks so much like Python, why can't we simply point a Python type checker at it? Starlark has its own semantics, and Bazel adds constructs that Python tooling doesn't understand out of the box. His experimental checker, [`sty`](https://github.com/tamird/sty), builds on Starpls and uses `ty` for type analysis. I liked the prospect of getting feedback in an editor while the wider ecosystem works through annotation support and compatibility.
+
+[Persistent Test Runners](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1266475), by John Cater and Antonio Di Stefano, covered the repeated attempts to avoid paying test-process startup costs for every run. Keeping a JVM or other expensive test environment alive sounds straightforward until different test rules and lifecycle requirements enter the picture. My notes include a preview provider and proposed Java lifecycle hooks; I came away treating those as work in progress, rather than APIs I could assume were available everywhere.
+
+By evening, I'd reached my limit for dense technical explanations. I had more drinks than planned, along with some small bites, then headed to Social Impact Factory for impromptu karaoke and giant Parcheesi. More conversation followed at Venturo Skylounge. My notes from that part of the day are considerably less technical.
+
+### Day 3: toolchains, packages, and configurations
+
+The final morning went straight into technical talks. David Zbarsky's subjects seemed particularly well matched to my interests in C and toolchains.
+
+He and Corentin Kerisit presented [Lessons learned building a zero-sysroot fully hermetic LLVM toolchain for Bazel](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1261770). Their [Hermetic LLVM project](https://github.com/hermeticbuild/hermetic-llvm) builds target-specific runtime components from source and makes them explicit parts of the build. That includes components normally supplied through a target sysroot, such as C libraries and compiler runtimes. Seeing cross-compilation and linking modeled this way gave me a much more concrete understanding of hermetic toolchains.
+
+Zbarsky followed with [rules\_rs: {Fast, Hermetic, Ergonomic} - Pick 3](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1245581). [`rules\_rs`](https://github.com/hermeticbuild/rules_rs) builds on `rules\_rust`, with Cargo integration and toolchains for cross-platform builds. Its use of Cargo's lockfile directly, without another Bazel-specific Cargo lockfile, appealed to me. Keeping two build systems synchronized already sounds like enough work.
+
+Armando Montanez and Ulf Adams' [Proving Equivalence in any2bazel Build System Migrations](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1268437) caught my attention as soon as the CMake File API appeared. [any2bazel](https://github.com/EngFlow/any2bazel) compares what the original build and the Bazel build actually compile and link. An LLM can generate or revise BUILD files, while a deterministic comparison exposes differences and guides the next attempt. The documented paths include CMake and Maven. Its checks have a defined scope, so I wouldn't read "equivalence" as proof that every possible build behavior is identical, but it gives a migration something concrete to test against.
+
+[No bytes left untracked - Bazel Supply Chain Security](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1254769), by Antonio Di Stefano and Yannic Bonenberger, introduced work on collecting dependency metadata and producing software bills of materials. The [`package\_metadata` framework](https://github.com/bazel-contrib/supply-chain) supports gathering package information and applying organization-specific checks. I was glad to see people working on making that information available from the build itself. An SBOM won't prevent every supply-chain attack, but knowing what went into an artifact is a useful starting point.
+
+Reid McKenzie's [Let the Package Manager Decide](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1272892) brought us into Python packaging. The walkthrough of installation behavior and wheel filenames helped me follow the discussion of [`rules\_py`](https://github.com/aspect-build/rules_py) and its `uv` integration. Using lockfile information to configure dependencies, while representing source builds as Bazel actions, offers more control over how third-party packages are built. It also made me appreciate how much work is hidden behind a seemingly simple package installation.
+
+Scott Cao's [One Build, Many Configurations: Comparing Configuration Features in Bazel and Buck2](https://events.linuxfoundation.org/bazelcon/program/schedule/?id=1272973) addressed another problem I could easily imagine growing out of hand: building the same code for different platforms, optimization levels, and sanitizers without multiplying unnecessary work. Bazel's flagsets and Buck2's configuration modifiers offer ways to make those choices easier to manage. The [Buck2 modifier design](https://buck2.build/docs/rfcs/implemented/modifiers/) also clarified a detail in my notes: it recommends modifiers for library defaults; it doesn't establish a blanket ban on transitions for libraries. Modifiers can set or replace a constraint when constructing a top-level target's configuration, letting a choice such as ASan compose with other settings.
+
+### What I'm taking home
+
+Hermeticity was the theme I kept hearing: make the build's inputs explicit, control the environment, and give other people a fair chance of reproducing the result. I'm still a Bazel newcomer, and plenty of these talks left me with questions I'll need to answer by trying things myself. That's part of why I'm excited to keep going. The workshops gave me repositories to revisit, and the conversations made contributing feel less intimidating. I hope I can help improve Bazel's ecosystem as I learn, perhaps by documenting a confusing setup step or turning a toolchain problem into a small, reproducible bug report and eventually a patch. I'd love to return to a future BazelCon with something useful to share, even if it's a modest fix that saves the next newcomer an afternoon.
+
+
 ## CppCon 2026: Tying Up Loose Threads
 
 My 1st time attending CppCon.
