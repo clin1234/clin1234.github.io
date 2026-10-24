@@ -84,7 +84,7 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
 <button id="demo" class="muted" type="button">Try demo</button>
 <div id="status" class="status" role="status" aria-live="polite"><span class="dot"></span><span id="statusText">Disconnected</span></div>
 </div>
-<p class="tips" id="browserTip">Choose <strong>Scan</strong> to open your browser's Bluetooth device picker, then select <strong>Connect</strong>. Demo mode works without hardware.</p>
+<p class="tips" id="browserTip">Choose <strong>Scan</strong> to open the BLE device picker, then select <strong>Connect</strong>. Disconnect your Android phone from the Pico first. Your board may appear as <strong>MechSoul</strong>, and <strong>Append LF</strong> is enabled for line-delimited messages.</p>
 </div>
 </section>
 <section class="card panel">
@@ -92,7 +92,7 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
 <label class="field-label" for="outgoing">Editable outgoing message</label>
 <textarea id="outgoing" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Type ASCII text here...&#10;Example: HELLO, DEVICE!"></textarea>
 <div class="send-row">
-<div class="send-tools"><label class="check"><input type="checkbox" id="appendNewline"> Append LF (\n)</label><span id="charCount">0 characters</span></div>
+<div class="send-tools"><label class="check"><input type="checkbox" id="appendNewline" checked> Append LF (\n)</label><span id="charCount">0 characters</span></div>
 <div class="actions"><button class="muted" type="button" id="clearSend">Clear</button><button class="primary" type="button" id="send" disabled>➤ &nbsp;Send</button></div>
 </div>
 <p id="feedback" class="inline-feedback" role="status" aria-live="polite"></p>
