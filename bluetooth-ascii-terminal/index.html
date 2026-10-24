@@ -19,7 +19,9 @@ h2{font-size:1.2rem;letter-spacing:-.02em;margin:0;color:#14213d}
 p{margin:0}.sub{color:#61728f;font-size:1.05rem;line-height:1.5}
 .device-panel{padding:24px 26px}
 .connect-row{display:flex;align-items:end;gap:13px;flex-wrap:wrap}
-.device-field{flex:1 1 270px;min-width:200px}
+.device-field{flex:1 1 210px;min-width:180px}
+.device-selection{display:flex;align-items:center;min-height:48px;color:#425b80;font-weight:600;font-size:.94rem;word-break:break-word}
+.device-selection.selected{color:#1667d5}
 .field-label{display:block;font-size:.87rem;font-weight:700;color:#233556;margin-bottom:9px}
 select,textarea,input[type=text]{width:100%;border:1px solid #c9d7eb;border-radius:10px;background:white;color:#172a47;font:inherit;outline-offset:2px}
 select,input[type=text]{height:48px;padding:0 15px}
@@ -78,13 +80,13 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
 </header>
 <div class="device-panel">
 <div class="connect-row">
-<div class="device-field"><label class="field-label" for="devices">Bluetooth device</label><select id="devices" aria-label="Selected Bluetooth device"><option value="">Select a device...</option></select></div>
+<div class="device-field"><span class="field-label">Selected Bluetooth device</span><div id="selectedDeviceName" class="device-selection" aria-live="polite">No device selected</div></div>
 <button id="scan" class="primary" type="button">⌕ &nbsp;Scan</button>
 <button id="connect" class="secondary" type="button" disabled>Connect</button>
 <button id="demo" class="muted" type="button">Try demo</button>
 <div id="status" class="status" role="status" aria-live="polite"><span class="dot"></span><span id="statusText">Disconnected</span></div>
 </div>
-<p class="tips" id="browserTip">Choose <strong>Scan</strong> to open the BLE device picker, then select <strong>Connect</strong>. Disconnect your Android phone from the Pico first. Your board may appear as <strong>MechSoul</strong>, and <strong>Append LF</strong> is enabled for line-delimited messages.</p>
+<p class="tips" id="browserTip"><strong>Scan</strong> only shows BLE devices advertising a name beginning with <strong>MechSoul</strong>, excluding unknown and unrelated devices. Disconnect your Android phone from the Pico before scanning. <strong>Append LF</strong> is enabled for line-delimited messages.</p>
 </div>
 </section>
 <section class="card panel">
@@ -119,7 +121,7 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
 'use strict';
 (function () {
   const el = (id) => document.getElementById(id);
-  const devices = new Map();
+  let selectedDevice = null;
   let currentDevice = null;
   let server = null;
   let writeCharacteristic = null;
@@ -143,8 +145,10 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
   }
   function refreshButtons() {
     const connected = isLive();
-    el('connect').disabled = !connected && (!el('devices').value || inDemo);
+    el('connect').disabled = !connected && (!selectedDevice || inDemo);
     el('connect').textContent = connected ? 'Disconnect' : 'Connect';
+    el('selectedDeviceName').textContent = selectedDevice ? (selectedDevice.name || 'Selected device') : 'No device selected';
+    el('selectedDeviceName').classList.toggle('selected', Boolean(selectedDevice));
     el('send').disabled = sending || (!connected && !inDemo);
     el('demo').textContent = inDemo ? 'Exit demo' : 'Try demo';
     el('serviceUuid').disabled = connected;
@@ -228,27 +232,19 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
     try {
       // Must run as a direct consequence of a user click to open the system device chooser.
       const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
+        // The browser's own chooser applies this before showing candidates.
+        // Name-prefix matching accepts both "MechSoul" and "MechSoul Telegraph".
+        filters: [{ namePrefix: 'MechSoul' }],
         optionalServices: [serviceId]
       });
-      if (!devices.has(device.id)) {
-        devices.set(device.id, device);
-        const option = document.createElement('option');
-        option.value = device.id;
-        option.textContent = device.name || 'Unnamed Bluetooth device';
-        el('devices').append(option);
-      }
-      el('devices').value = device.id;
-      notice('Selected ' + (device.name || 'unnamed device') + '. Select Connect to continue.', 'ok');
+      if (isLive() && currentDevice.id !== device.id) clearConnection();
+      selectedDevice = device;
+      notice('Selected ' + (device.name || 'MechSoul device') + '. Select Connect to continue.', 'ok');
       refreshButtons();
     } catch (error) {
       if (error.name !== 'NotFoundError') notice('Scan failed: ' + errorMessage(error), 'error');
       else notice('No device selected.');
     }
-  });
-  el('devices').addEventListener('change', function () {
-    if (isLive() && currentDevice.id !== el('devices').value) clearConnection();
-    refreshButtons();
   });
   el('connect').addEventListener('click', async function () {
     if (isLive()) {
@@ -256,7 +252,7 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
       notice('Disconnected.');
       return;
     }
-    const chosen = devices.get(el('devices').value);
+    const chosen = selectedDevice;
     if (!chosen) return;
     if (inDemo) exitDemo();
     el('connect').disabled = true;
