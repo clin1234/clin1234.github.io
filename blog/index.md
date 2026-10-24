@@ -10,6 +10,66 @@
 
 # Utterances of a Cynic
 
+## AGNTCon + MCPCon 2026: a plugin, too many booths, and one Lego set
+
+Posted on October 24, 2026.
+
+I spent October 22–23 in San Jose at [AGNTCon + MCPCon North America](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/). I came to learn more about agentic development, present my experience building a Claude Code plugin, and see what people were making with MCP. Judging by how I actually spent the two days, I also came to inspect nearly every sponsor booth.
+
+The [schedule](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/) was full of talks I wanted to attend. My ability to leave an interesting conversation in time for one needs work.
+
+### Before the conference
+
+The festivities started on October 21 at the [AI Community Bash, featuring De La Soul](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/?id=1292533). I got to chat with PyTorch attendees on their conference's last day before starting my own two-day excursion.
+
+As I admitted in [my first update](https://lnkd.in/p/eZcuucXP), I probably could have exercised more restraint around the drinks. A sensible observation to make after the fact.
+
+### Day 1: MCP updates, then straight to the booths
+
+Keynotes can test my patience, but a couple of things caught my attention. One was [David Soria Parra's “MCP and the Era of Connectivity”](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/?id=1288844). Soria Parra, from Anthropic, is a co-creator of the Model Context Protocol. His updates on Tasks and skills over MCP gave me something concrete to look into afterward.
+
+The [Tasks extension](https://tasks.extensions.modelcontextprotocol.io/) supports work that takes too long to finish in a single immediate response. A client can receive a task handle, poll for its status, and retrieve the result when it is ready. This was already part of MCP's development before the conference; the keynote put it on my radar. For someone still learning how these systems fit together, having an explicit way to track unfinished work makes sense.
+
+The [Skills extension](https://modelcontextprotocol.io/extensions/skills/overview) interested me for a more personal reason. MCP servers can expose reusable workflow instructions and supporting files, which clients discover and read through MCP. Having spent time putting instructions into a Claude Code plugin, I wanted to understand how that work could travel between tools. The specification exists, though SDK and host support are still being implemented, so I would check a client's support before assuming it all works together.
+
+I also enjoyed the live demo of [Buzz](https://github.com/block/buzz), Block's open-source workspace for humans and agents to collaborate. The program included Bradley Axen's keynote, [“Building the Human-Agent Workplace”](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/?id=1288826), along with dedicated Buzz sessions. Seeing a working application helped ground a morning otherwise heavy on discussion about agents.
+
+Then I entered the Solutions Showcase and more or less surrendered the rest of my available time to it. The sponsor area felt larger than the one I remembered from Open Source Summit North America in Minneapolis. That is a personal impression, not a floor-plan measurement, but it certainly contained enough booths to derail my plans.
+
+I talked with almost every sponsor and neglected the other talks and poster sessions I had meant to attend. There was always another demo to inspect or another conversation to finish. Useful conversations, admittedly, but the sessions continued without me.
+
+### Turning myself in
+
+Somewhere amid the booth visits, I entered PointFive's [AI's Most Wanted contest](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/?id=1361453). My [confession](https://lnkd.in/p/eyDCKmTr) concerned a request to add compiler sanitizer support in CI. The agent produced large patches touching more than 30 crate dependencies for instrumentation and rebuilt Rust's standard library from source.
+
+That is quite a diff to receive from a request that fits in one sentence. It also gave me a suitable confession for a conference about agents. I still have plenty to learn about setting scope and reviewing what comes back, especially when the work reaches into dependencies and build infrastructure.
+
+### My turn to present
+
+I did manage to leave the booths for my own talk: [“Anatomy of a Claude Code Plugin, and Lessons Learned on Creating One”](https://events.linuxfoundation.org/agntcon-mcpcon-north-america/program/schedule/?id=1246201).
+
+The subject was the [Rust Extension Review Toolkit](https://github.com/clin1234/rust-ext-review-toolkit), a Claude Code plugin I co-developed for reviewing Rust-based Python extensions using PyO3. I started without prior experience building Claude Code plugins, which gave me plenty of material for the “lessons learned” part of the title.
+
+The project combines review instructions, specialized agents, scripts, and reference material. Its checks can help identify areas worth investigating, but a candidate finding still needs judgment. A parser cannot tell the whole story about a Rust program, particularly when macros and type information matter. Documentation and testing against actual extensions matter too; an impressive-looking review is of limited use if its recommendations do not hold up against the code.
+
+Presenting this work gave me a way to contribute while still being new to much of the surrounding ecosystem. I could talk about a specific thing I had helped build, including its limits, and leave the grand predictions about the future of agents to somebody else.
+
+Afterward, I returned to the booths for the raffles and won precisely nothing. The evening continued at Poppy & Claro with more conversation and indulgence. My [first-day notes](https://lnkd.in/p/eQqPu5aK) capture the mixture of technical curiosity and questionable time management fairly well.
+
+### Day 2: I apparently learned nothing about scheduling
+
+On Friday, the Solutions Showcase drew me back in. I spent the most time visiting TrueFoundry, Arm, Block, CData Software, Okta, Fly.io, and Runlayer. Between established companies and startups, there was enough to examine that I again missed the technical sessions I had been looking forward to.
+
+I regret that part. Governance, orchestration, agentic workflows, and further MCP work were all on my list, and I cannot give an account of talks I did not attend. Next time, I need to pick a few sessions in advance and actually leave the booths when they start.
+
+Still, I enjoyed asking questions and seeing what each company had built. I am early enough in this area that even figuring out what to ask takes some effort. The conversations left me with plenty to investigate after the conference.
+
+My raffle fortunes also improved: I won a Lego set. After Thursday's results, I will take it. By the time I wrote [my second-day update](https://lnkd.in/p/egZqNdjx), I was still a little bedazzled by how much there had been to see.
+
+### Until next time
+
+I left AGNTCon + MCPCon excited to keep building, with a clearer sense of how much I still need to learn. As a newcomer, I hope I can help make this ecosystem easier for the next person to approach, whether through a useful plugin, better documentation, or an honest account of what did and did not work. I would like to return with better questions, a more disciplined conference schedule, and another piece of agentic development worth presenting. Thanks to The Linux Foundation, the Agentic AI Foundation, and everyone who organized the event or took the time to talk with me. There is a lot here I want to understand, and I am looking forward to getting my hands back into the code.
+
 ## My first BazelCon: build graphs, bad Wi-Fi, and stolen cards
 
 I arrived in Amsterdam for [BazelCon 2026](https://events.linuxfoundation.org/bazelcon/) with plenty to learn about Bazel. Then I got robbed on the metro the day before the conference. Without my cards, I couldn't pay for my reservation at Bastion Amstel, so I ended up using a virtual card to book a night in a hostel. Not the introduction to Amsterdam I'd hoped for.
