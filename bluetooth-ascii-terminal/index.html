@@ -86,7 +86,7 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
 <button id="demo" class="muted" type="button">Try demo</button>
 <div id="status" class="status" role="status" aria-live="polite"><span class="dot"></span><span id="statusText">Disconnected</span></div>
 </div>
-<p class="tips" id="browserTip"><strong>Scan</strong> only shows BLE devices advertising a name beginning with <strong>MechSoul</strong>, excluding unknown and unrelated devices. Disconnect your Android phone from the Pico before scanning. <strong>Append LF</strong> is enabled for line-delimited messages.</p>
+<p class="tips" id="browserTip"><strong>Scan</strong> shows only BLE devices advertising the configured Nordic UART Service UUID, regardless of device name. Disconnect your Android phone from the Pico before scanning. <strong>Append LF</strong> is enabled for line-delimited messages.</p>
 </div>
 </section>
 <section class="card panel">
@@ -232,10 +232,9 @@ footer{text-align:center;color:#7989a1;font-size:.81rem;line-height:1.7;padding:
     try {
       // Must run as a direct consequence of a user click to open the system device chooser.
       const device = await navigator.bluetooth.requestDevice({
-        // The browser's own chooser applies this before showing candidates.
-        // Name-prefix matching accepts both "MechSoul" and "MechSoul Telegraph".
-        filters: [{ namePrefix: 'MechSoul' }],
-        optionalServices: [serviceId]
+        // The browser filters advertised GATT services before showing candidates.
+        // The device may have any name, but it must advertise the selected UART service.
+        filters: [{ services: [serviceId] }]
       });
       if (isLive() && currentDevice.id !== device.id) clearConnection();
       selectedDevice = device;
